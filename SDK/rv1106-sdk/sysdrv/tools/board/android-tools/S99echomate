@@ -1,0 +1,32 @@
+#!/bin/sh
+
+PIDFILE=/var/run/echomate-main.pid
+APPDIR=/root/bin
+APP=$APPDIR/main
+
+case "$1" in
+start)
+    [ -x "$APP" ] || exit 0
+    [ -s "$PIDFILE" ] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null && exit 0
+    cd "$APPDIR" || exit 1
+    "$APP" >>/var/log/echomate-main.log 2>&1 &
+    echo $! > "$PIDFILE"
+    ;;
+stop)
+    if [ -s "$PIDFILE" ]; then
+        kill "$(cat "$PIDFILE")" 2>/dev/null || true
+        rm -f "$PIDFILE"
+    fi
+    ;;
+restart|reload)
+    "$0" stop
+    sleep 1
+    "$0" start
+    ;;
+*)
+    echo "Usage: $0 {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+exit 0

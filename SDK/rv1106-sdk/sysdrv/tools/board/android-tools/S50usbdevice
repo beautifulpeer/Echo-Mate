@@ -7,15 +7,18 @@
 . /etc/profile
 
 UMS_EN=off
-ADB_EN=on
+ADB_EN=off
 MTP_EN=off
 NTB_EN=off
-ACM_EN=off
+ACM_EN=on
 UAC1_EN=off
 UAC2_EN=off
 UVC_EN=off
-RNDIS_EN=on
+# USB networking is intentionally disabled.  A failed Windows RNDIS device
+# otherwise keeps resetting the whole composite gadget.
+RNDIS_EN=off
 HID_EN=off
+DISPLAY_EN=off
 
 USB_ATTRIBUTE=0x409
 USB_GROUP=rockchip
@@ -56,6 +59,7 @@ function_init()
 	test_write 1 ${USB_FUNCTIONS_DIR}/uac2.gs0/c_feature_unit
 	test_write 1 ${USB_FUNCTIONS_DIR}/uac2.gs0/p_feature_unit
 	mkdir ${USB_FUNCTIONS_DIR}/ffs.adb
+	mkdir ${USB_FUNCTIONS_DIR}/ffs.display
 	mkdir ${USB_FUNCTIONS_DIR}/ffs.ntb
 	mkdir ${USB_FUNCTIONS_DIR}/mtp.gs0
 	mkdir ${USB_FUNCTIONS_DIR}/rndis.gs0
@@ -210,7 +214,7 @@ parameter_init()
 			PID=0x1005
 			;;
 		*)
-			PID=0x0019
+			PID=0x0006
 	esac
 }
 
@@ -224,6 +228,15 @@ use_os_desc()
 
 pre_run_binary()
 {
+	if [ $DISPLAY_EN = on ];then
+		mkdir -p /dev/usb-ffs/display
+		grep -qs ' /dev/usb-ffs/display ' /proc/mounts || mount -t functionfs display /dev/usb-ffs/display
+		start-stop-daemon --start --quiet --background --exec /root/bin/usb_displayd --make-pidfile --pidfile /var/run/usb_displayd.pid
+	fi
+	if [ $ACM_EN = on ];then
+		start-stop-daemon --start --quiet --background --exec /root/bin/usb_displayd_serial --make-pidfile --pidfile /var/run/usb_displayd.pid
+	fi
+
 	if [ $ADB_EN = on ];then
 		mkdir /dev/usb-ffs/adb -m 0770
 		mount -o uid=2000,gid=2000 -t functionfs adb /dev/usb-ffs/adb
@@ -338,6 +351,7 @@ bind_functions()
 	test $RNDIS_EN = on && syslink_function rndis.gs0
 	test $MTP_EN = on && syslink_function mtp.gs0
 	test $NTB_EN = on && syslink_function ffs.ntb
+	test $DISPLAY_EN = on && syslink_function ffs.display
 	test $ADB_EN = on && syslink_function ffs.adb
 	test $ACM_EN = on && syslink_function acm.gs6
 
@@ -391,6 +405,8 @@ program_kill()
 usb_device_stop()
 {
 	echo "none" > ${USB_CONFIGFS_DIR}/UDC
+	program_kill usb_displayd_serial
+	program_kill usb_displayd
 	program_kill adbd
 	program_kill mtp-server
 	ls ${USB_CONFIGS_DIR} | grep f[0-9] | xargs -I {} rm ${USB_CONFIGS_DIR}/{}
@@ -411,11 +427,15 @@ start)
 #	fi
 
 	parameter_init
+	test $DISPLAY_EN = on && PID=0x0030
+	test $ACM_EN = on && PID=0x1005
 #	if [ -z $CONFIG_STRING ]; then
 #		echo "$0: no function be selected"
 #		exit 0
 #	fi
 	test -d ${USB_CONFIGFS_DIR} || configfs_init
+	test -d ${USB_FUNCTIONS_DIR}/ffs.display || mkdir ${USB_FUNCTIONS_DIR}/ffs.display
+	test -e ${USB_FUNCTIONS_DIR}/rndis.gs0/wceis && echo 1 > ${USB_FUNCTIONS_DIR}/rndis.gs0/wceis
 	use_os_desc
 	echo $PID > ${USB_CONFIGFS_DIR}/idProduct
 	bind_functions

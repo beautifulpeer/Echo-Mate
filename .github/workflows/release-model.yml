@@ -1,0 +1,44 @@
+name: Publish verified model dependency
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - dependencies.json
+      - scripts/setup-deps.py
+      - .github/workflows/release-model.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-model-dependency
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'beautifulpeer/Echo-Mate'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+          submodules: false
+          sparse-checkout: |
+            dependencies.json
+            scripts
+      - name: Download model and verify against the local version's SHA-256
+        run: python3 scripts/setup-deps.py --prepare-release release-assets
+      - name: Publish assets in this repository
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          TAG=$(python3 -c 'import json; print(json.load(open("dependencies.json"))["release"])')
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Echo-Mate model dependencies" --notes "SenseVoiceSmall model matching dependencies.json. Verify using SHA256SUMS.txt. Original model: iic/SenseVoiceSmall."
+          fi
+          gh release upload "$TAG" release-assets/* --clobber

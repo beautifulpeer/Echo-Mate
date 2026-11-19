@@ -59,6 +59,14 @@ all: dep-openssl
 	$(SYSDRV_CROSS)-strip -s $(PKG_INSTALL_BIN_DIR)/adbd ;
 	@mkdir -p $(PKG_BIN)/etc/init.d;
 	@cp -fa $(CURRENT_DIR)/S50usbdevice $(PKG_BIN)/etc/init.d;
+	@cp -fa $(CURRENT_DIR)/S99echomate $(PKG_BIN)/etc/init.d;
+	@mkdir -p $(PKG_BIN)/root/bin;
+	@cp -fa $(CURRENT_DIR)/echomate-bin/. $(PKG_BIN)/root/bin/;
+	@cp -fa $(CURRENT_DIR)/usb_displayd_serial $(PKG_BIN)/root/bin/;
+	@chmod 755 $(PKG_BIN)/etc/init.d/S50usbdevice \
+		$(PKG_BIN)/etc/init.d/S99echomate \
+		$(PKG_BIN)/root/bin/main \
+		$(PKG_BIN)/root/bin/usb_displayd_serial;
 	$(call MAROC_COPY_PKG_TO_SYSDRV_OUTPUT, $(SYSDRV_DIR_OUT_ROOTFS), $(CURRENT_DIR)/$(PKG_BIN))
 
 dep-openssl:
@@ -69,4 +77,3 @@ clean: distclean
 distclean:
 	-rm -rf $(PKG_NAME_ANDROID_TOOLS) $(PKG_BIN)
 	-$(MAKE) clean -C $(PKG_DEP_OPENSSL)
-

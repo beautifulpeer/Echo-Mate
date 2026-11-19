@@ -9,9 +9,9 @@
 推荐直接使用本仓库改好的SDK，如下：
 
 ```shell
-git clone https://github.com/No-Chicken/Echo-Mate.git
+git clone https://github.com/beautifulpeer/Echo-Mate.git
 cd Echo-Mate
-git submodule update --init --recursive
+python3 scripts/setup-deps.py
 cd ./SDK/rv1106-sdk
 ```
 

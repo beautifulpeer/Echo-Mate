@@ -1,0 +1,13 @@
+{
+  "repository": "beautifulpeer/Echo-Mate",
+  "release": "deps-v1",
+  "models": [
+    {
+      "path": "Demo/AIChat_demo/Server/models/FunAudioLLM/iic/SenseVoiceSmall/model.pt",
+      "asset": "sensevoice-small-model.pt",
+      "size": 936291369,
+      "sha256": "833ca2dcfdf8ec91bd4f31cfac36d6124e0c459074d5e909aec9cabe6204a3ea",
+      "source_url": "https://modelscope.cn/models/iic/SenseVoiceSmall/resolve/master/model.pt"
+    }
+  ]
+}

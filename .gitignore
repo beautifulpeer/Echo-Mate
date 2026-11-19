@@ -1,3 +1,24 @@
 # *.o
 .vscode
 
+# Local credentials and execution logs (already tracked files need review).
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.log
+__pycache__/
+*.pyc
+
+
+# Restored model and local Python environment
+Demo/AIChat_demo/Server/models/FunAudioLLM/iic/SenseVoiceSmall/model.pt
+**/.venv/
+**/build-*/
+*.restoring
+
+# GitHub release preparation output
+release-assets/
+*.downloading
+model.pt.parts/
+.github-migration/

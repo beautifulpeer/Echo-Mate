@@ -1,29 +1,39 @@
 #!/bin/sh
 
-TARGET_IP="172.32.0.93"
+TARGET_IP="192.168.137.100"
+GATEWAY_IP="192.168.137.1"
 
 MAX_RETRIES=10
 retries=0
 
 usb0_config() {
-	if [ "$(cat /proc/device-tree/usbdrd/usb@ffb00000/dr_mode)" == "peripheral" ]; then
+	if [ "$(cat /proc/device-tree/usbdrd/usb@ffb00000/dr_mode)" = "peripheral" ]; then
 		current_ip=$(ifconfig usb0 | grep -o 'inet addr:[^ ]*' | awk -F ':' '{print $2}')
 		echo "current_ip = $current_ip"
 		echo "TARGET_IP = $TARGET_IP"
 
-		while [[ "$current_ip" != "$TARGET_IP" && $retries -lt $MAX_RETRIES ]]; do
+		while [ "$current_ip" != "$TARGET_IP" ] && [ "$retries" -lt "$MAX_RETRIES" ]; do
 			sleep .5
 			echo "luckfox : set usb0 ip"
-			ifconfig usb0 "$TARGET_IP"
+			ifconfig usb0 "$TARGET_IP" netmask 255.255.255.0 up
 			current_ip=$(ifconfig usb0 | grep -o 'inet addr:[^ ]*' | awk -F ':' '{print $2}')
-			echo $current_ip
+			echo "$current_ip"
 			retries=$((retries + 1))
 		done
 
-		if [[ "$current_ip" != "$TARGET_IP" ]]; then
+		if [ "$current_ip" != "$TARGET_IP" ]; then
 			echo "usb0 config error"
 		else
 			echo "usb0 config success"
+
+			# Windows ICS uses 192.168.137.1 as its gateway.
+			route del default 2>/dev/null
+			route add default gw "$GATEWAY_IP" dev usb0
+
+			# This static configuration does not run udhcpc, so configure DNS here.
+			echo "nameserver 8.8.8.8" > /etc/resolv.conf
+			echo "nameserver 114.114.114.114" >> /etc/resolv.conf
+			echo "S90usb0config: gateway=$GATEWAY_IP dns=8.8.8.8,114.114.114.114 applied"
 		fi
 	else
 		echo "usb0 is using host mode"

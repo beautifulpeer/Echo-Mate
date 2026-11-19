@@ -35,7 +35,7 @@ extern unsigned char WPA_TKIP_CIPHER[4];
 #define R2T_PHY_DELAY	(0)
 
 /* define WAIT_FOR_BCN_TO_MIN	(3000) */
-#define WAIT_FOR_BCN_TO_MIN	(6000)
+#define WAIT_FOR_BCN_TO_MIN	(500)
 #define WAIT_FOR_BCN_TO_MAX	(20000)
 
 #define DISCONNECT_BY_CHK_BCN_FAIL_OBSERV_PERIOD_IN_MS 1000
