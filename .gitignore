@@ -22,3 +22,9 @@ release-assets/
 *.downloading
 model.pt.parts/
 .github-migration/
+
+# Local process state and development backups.
+*.pid
+*.bak
+*.bak.*
+*.before-*
