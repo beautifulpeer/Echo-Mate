@@ -1,0 +1,121 @@
+#!/bin/sh
+# Echo-Mate USB v2: standards-based RNDIS + CDC ACM maintenance console.
+# USB identity is for this local development image, not a registered product PID.
+set -eu
+CONFIGFS=${ECHO_USB_CONFIGFS:-/sys/kernel/config}
+UDC_DIR=${ECHO_USB_UDC_DIR:-/sys/class/udc}
+NET_DIR=${ECHO_USB_NET_DIR:-/sys/class/net}
+LOG=${ECHO_USB_LOG:-/var/log/echo-usb.log}
+G=$CONFIGFS/usb_gadget/echo_net
+F=$G/functions
+C=$G/configs/c.1
+
+mkdir -p "$(dirname "$LOG")"
+exec >>"$LOG" 2>&1
+
+stop_usb() {
+    if [ -f "$G/UDC" ] && [ -n "$(cat "$G/UDC")" ]; then
+        printf '\n' > "$G/UDC"
+    fi
+}
+
+start_usb() {
+    mkdir -p "$CONFIGFS"
+    if ! grep -qs " $CONFIGFS configfs " /proc/mounts; then
+        mount -t configfs none "$CONFIGFS"
+    fi
+    # Idempotent: don't disturb an already bound console/network interface.
+    if [ -f "$G/UDC" ] && [ -n "$(cat "$G/UDC")" ]; then
+        return 0
+    fi
+    # Configuration links retain function references even after UDC unbind.
+    # Remove them before changing immutable RNDIS attributes on restart.
+    for link in "$C/f1" "$C/f2" "$G/os_desc/c.1"; do
+        [ ! -L "$link" ] || rm "$link"
+    done
+    mkdir -p "$G"
+    echo 0x2207 > "$G/idVendor"
+    # Do not reuse 0006 (ADB) or 1005 (old display/ACM) and their cached drivers.
+    echo 0x4e4d > "$G/idProduct"
+    echo 0x0200 > "$G/bcdDevice"
+    echo 0x0200 > "$G/bcdUSB"
+    # Windows composite/IAD device descriptor: EF / 02 / 01.
+    echo 0xEF > "$G/bDeviceClass"
+    echo 0x02 > "$G/bDeviceSubClass"
+    echo 0x01 > "$G/bDeviceProtocol"
+    mkdir -p "$G/strings/0x409" "$C/strings/0x409"
+    serial=$(awk '/^Serial/ { print $3; exit }' /proc/cpuinfo)
+    [ -n "$serial" ] || serial=echomate
+    echo "${serial}-net2" > "$G/strings/0x409/serialnumber"
+    echo Echo-Mate > "$G/strings/0x409/manufacturer"
+    echo 'Echo-Mate Network and Console' > "$G/strings/0x409/product"
+    echo 'RNDIS + CDC ACM Console' > "$C/strings/0x409/configuration"
+    echo 0x80 > "$C/bmAttributes"
+    echo 500 > "$C/MaxPower"
+
+    mkdir -p "$F/rndis.usb0" "$F/acm.console"
+    # These are real attributes supported by this SDK's f_rndis.c.
+    # The old script attempted "wceis", which this kernel doesn't expose.
+    echo 0xE0 > "$F/rndis.usb0/class"
+    echo 0x01 > "$F/rndis.usb0/subclass"
+    echo 0x03 > "$F/rndis.usb0/protocol"
+    checksum=$(printf '%s' "$serial" | cksum)
+    checksum=${checksum%% *}
+    suffix=$(printf '%06x' "$((checksum & 16777215))" | sed 's/../&:/g;s/:$//')
+    echo "02:00:$suffix:01" > "$F/rndis.usb0/dev_addr"
+    echo "02:00:$suffix:02" > "$F/rndis.usb0/host_addr"
+    echo RNDIS > "$F/rndis.usb0/os_desc/interface.rndis/compatible_id"
+    echo 5162001 > "$F/rndis.usb0/os_desc/interface.rndis/sub_compatible_id"
+    echo 0x01 > "$G/os_desc/b_vendor_code"
+    echo MSFT100 > "$G/os_desc/qw_sign"
+    echo 1 > "$G/os_desc/use"
+
+    # Bind RNDIS first so its OS descriptor identifies interface 0.
+    [ -L "$C/f1" ] || ln -s "$F/rndis.usb0" "$C/f1"
+    [ -L "$C/f2" ] || ln -s "$F/acm.console" "$C/f2"
+    [ -L "$G/os_desc/c.1" ] || ln -s "$C" "$G/os_desc/c.1"
+    controller=
+    attempt=0
+    while [ "$attempt" -lt 50 ]; do
+        for entry in "$UDC_DIR"/*; do
+            [ -e "$entry" ] || continue
+            controller=${entry##*/}
+            break
+        done
+        [ -z "$controller" ] || break
+        sleep .1
+        attempt=$((attempt + 1))
+    done
+    [ -n "$controller" ] || { echo 'ERROR: no USB device controller'; return 1; }
+    # All descriptors and function links are ready before exposing the device.
+    if ! echo "$controller" > "$G/UDC"; then
+        # If this controller cannot allocate both functions' endpoints, retain
+        # a usable console instead of leaving the device completely offline.
+        echo 'Combined USB bind failed; falling back to CDC ACM console only'
+        rm "$C/f1"
+        echo 0 > "$G/os_desc/use"
+        echo 0x4e4e > "$G/idProduct"
+        echo 'Echo-Mate Console Recovery' > "$G/strings/0x409/product"
+        echo 'CDC ACM Console Recovery' > "$C/strings/0x409/configuration"
+        echo "$controller" > "$G/UDC"
+        echo 'USB console recovery bound: 2207:4e4e; ttyGS0'
+        return 0
+    fi
+    attempt=0
+    while [ "$attempt" -lt 30 ]; do
+        if [ -d "$NET_DIR/usb0" ]; then
+            ifconfig usb0 192.168.137.100 netmask 255.255.255.0 up
+            break
+        fi
+        sleep .1
+        attempt=$((attempt + 1))
+    done
+    echo "USB v2 bound: $controller, 2207:4e4d; usb0 + ttyGS0"
+}
+
+case "${1:-}" in
+start) start_usb ;;
+stop) stop_usb ;;
+restart|reload) stop_usb; sleep 1; start_usb ;;
+*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

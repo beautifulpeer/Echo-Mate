@@ -1,0 +1,999 @@
+{
+  "distribution": "Debian bookworm",
+  "architecture": "armhf",
+  "mirror": "https://mirrors.tuna.tsinghua.edu.cn/debian",
+  "packages": [
+    {
+      "file": "adduser_3.134_all.deb",
+      "sha256": "c24fe4eb8e60d8632d72ed104cce7c92cff200847c897dc8ba764b6c47b519e0",
+      "filename": "pool/main/a/adduser/adduser_3.134_all.deb",
+      "Package": "adduser",
+      "Version": "3.134",
+      "Architecture": "all"
+    },
+    {
+      "file": "dbus-bin_1.14.10-1~deb12u1_armhf.deb",
+      "sha256": "d2dd421c4c18ea67a7c4184bf31f73fd16a580048ed4b7b483eeb5886c79e8d3",
+      "filename": "pool/main/d/dbus/dbus-bin_1.14.10-1~deb12u1_armhf.deb",
+      "Package": "dbus-bin",
+      "Version": "1.14.10-1~deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "dbus-daemon_1.14.10-1~deb12u1_armhf.deb",
+      "sha256": "8238913c664752e69b4c0f2fdb0a4208808ad02fcaa90661ab80bd1f4440fd96",
+      "filename": "pool/main/d/dbus/dbus-daemon_1.14.10-1~deb12u1_armhf.deb",
+      "Package": "dbus-daemon",
+      "Version": "1.14.10-1~deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "dbus-session-bus-common_1.14.10-1~deb12u1_all.deb",
+      "sha256": "b19cb8e3581d6b09ff3f46fee23de2813811353228c666c9d1ad885598062e43",
+      "filename": "pool/main/d/dbus/dbus-session-bus-common_1.14.10-1~deb12u1_all.deb",
+      "Package": "dbus-session-bus-common",
+      "Version": "1.14.10-1~deb12u1",
+      "Architecture": "all"
+    },
+    {
+      "file": "dbus-system-bus-common_1.14.10-1~deb12u1_all.deb",
+      "sha256": "2111d3d0c98ac68ee973274058447e6fab1c359fec1d4bb195f5fcc5833a19e2",
+      "filename": "pool/main/d/dbus/dbus-system-bus-common_1.14.10-1~deb12u1_all.deb",
+      "Package": "dbus-system-bus-common",
+      "Version": "1.14.10-1~deb12u1",
+      "Architecture": "all"
+    },
+    {
+      "file": "dbus_1.14.10-1~deb12u1_armhf.deb",
+      "sha256": "319e1802a831f3f3921a1751afe948173bf4d04c402356e2560828649e262b58",
+      "filename": "pool/main/d/dbus/dbus_1.14.10-1~deb12u1_armhf.deb",
+      "Package": "dbus",
+      "Version": "1.14.10-1~deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "debconf_1.5.82_all.deb",
+      "sha256": "74ab14194a3762b2fc717917dcfda42929ab98e3c59295a063344dc551cd7cc8",
+      "filename": "pool/main/d/debconf/debconf_1.5.82_all.deb",
+      "Package": "debconf",
+      "Version": "1.5.82",
+      "Architecture": "all"
+    },
+    {
+      "file": "dmsetup_2%3a1.02.185-2_armhf.deb",
+      "sha256": "71341a03044d2c386a468fa29cb6a8efca2ad43afc39daa21e7b840a452dbbb0",
+      "filename": "pool/main/l/lvm2/dmsetup_1.02.185-2_armhf.deb",
+      "Package": "dmsetup",
+      "Version": "2:1.02.185-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "dpkg_1.21.23_armhf.deb",
+      "sha256": "53c66ba6e645e5a4b7df0bfd9d6559d8905f1d4190ee891fc530940b4a7eb038",
+      "filename": "pool/main/d/dpkg/dpkg_1.21.23_armhf.deb",
+      "Package": "dpkg",
+      "Version": "1.21.23",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "gcc-12-base_12.2.0-14+deb12u1_armhf.deb",
+      "sha256": "aa50f90c440377b9219830ed3e658aedcb0a1c1bb47733eb05cf65545012f563",
+      "filename": "pool/main/g/gcc-12/gcc-12-base_12.2.0-14+deb12u1_armhf.deb",
+      "Package": "gcc-12-base",
+      "Version": "12.2.0-14+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "init-system-helpers_1.65.2+deb12u1_all.deb",
+      "sha256": "afab482524c64e4e256eb5cab43c1a96dc493ec476d94f19f1a5ec3de5fa0fef",
+      "filename": "pool/main/i/init-system-helpers/init-system-helpers_1.65.2+deb12u1_all.deb",
+      "Package": "init-system-helpers",
+      "Version": "1.65.2+deb12u1",
+      "Architecture": "all"
+    },
+    {
+      "file": "libacl1_2.3.1-3_armhf.deb",
+      "sha256": "825a955bc00fe2d0df2a4a91d06495dfef02b3121180d1f394ec731de1f266e7",
+      "filename": "pool/main/a/acl/libacl1_2.3.1-3_armhf.deb",
+      "Package": "libacl1",
+      "Version": "2.3.1-3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libapparmor1_3.0.8-3_armhf.deb",
+      "sha256": "42e068ac918d645857cc0adf17c950b02604ec95f471022c793a1865c9ed96c2",
+      "filename": "pool/main/a/apparmor/libapparmor1_3.0.8-3_armhf.deb",
+      "Package": "libapparmor1",
+      "Version": "3.0.8-3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libargon2-1_0~20171227-0.3+deb12u1_armhf.deb",
+      "sha256": "7263348c2df06761fa6ac90f98b967736667e825c3e65e0546d54113ed045c35",
+      "filename": "pool/main/a/argon2/libargon2-1_0~20171227-0.3+deb12u1_armhf.deb",
+      "Package": "libargon2-1",
+      "Version": "0~20171227-0.3+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libaudit-common_1%3a3.0.9-1_all.deb",
+      "sha256": "17d0341ca6ce604ce59c296780ac2c2a24141a769823c50669af942c025e6591",
+      "filename": "pool/main/a/audit/libaudit-common_3.0.9-1_all.deb",
+      "Package": "libaudit-common",
+      "Version": "1:3.0.9-1",
+      "Architecture": "all"
+    },
+    {
+      "file": "libaudit1_1%3a3.0.9-1_armhf.deb",
+      "sha256": "64b557f4f8afff896a52432f3371003666f3b4c352c37b71b43ad5c1dabe7c45",
+      "filename": "pool/main/a/audit/libaudit1_3.0.9-1_armhf.deb",
+      "Package": "libaudit1",
+      "Version": "1:3.0.9-1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libblkid1_2.38.1-5+deb12u3_armhf.deb",
+      "sha256": "f239a932f91b986461688fe46275cb951130a2685375b3c332b779d01f87467d",
+      "filename": "pool/main/u/util-linux/libblkid1_2.38.1-5+deb12u3_armhf.deb",
+      "Package": "libblkid1",
+      "Version": "2.38.1-5+deb12u3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libbluetooth3_5.66-1+deb12u2_armhf.deb",
+      "sha256": "ba94c2bfd724fe0742ebfa08eba594cb890bbb51171ea0dd73f16a7c1efab139",
+      "filename": "pool/main/b/bluez/libbluetooth3_5.66-1+deb12u2_armhf.deb",
+      "Package": "libbluetooth3",
+      "Version": "5.66-1+deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libbrotli1_1.0.9-2+b6_armhf.deb",
+      "sha256": "cd5f71b7f74d56781e19e0186435c46e1d0a4541e3261f2bc15af751e314d0c2",
+      "filename": "pool/main/b/brotli/libbrotli1_1.0.9-2+b6_armhf.deb",
+      "Package": "libbrotli1",
+      "Version": "1.0.9-2+b6",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libbz2-1.0_1.0.8-5+b1_armhf.deb",
+      "sha256": "aeed5e720eb41badf6ab8b0e719007fe446c13ce93a8d75ca37d1cdfaaf7f5b4",
+      "filename": "pool/main/b/bzip2/libbz2-1.0_1.0.8-5+b1_armhf.deb",
+      "Package": "libbz2-1.0",
+      "Version": "1.0.8-5+b1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libc-bin_2.36-9+deb12u14_armhf.deb",
+      "sha256": "f80ddaf59a2da5a10974bee1e6e5c02464f94198f255959cafb6df116039dcfa",
+      "filename": "pool/main/g/glibc/libc-bin_2.36-9+deb12u14_armhf.deb",
+      "Package": "libc-bin",
+      "Version": "2.36-9+deb12u14",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libc6_2.36-9+deb12u14_armhf.deb",
+      "sha256": "758c68b92654747025b48476a45c315bf16df1321224abdd9be672bfd120be45",
+      "filename": "pool/main/g/glibc/libc6_2.36-9+deb12u14_armhf.deb",
+      "Package": "libc6",
+      "Version": "2.36-9+deb12u14",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libcap-ng0_0.8.3-1+b3_armhf.deb",
+      "sha256": "f99ba8bd232b4106ab6dbdc28aa5cbf086c00a2bfc563cad4ae1f4cf657de8e5",
+      "filename": "pool/main/libc/libcap-ng/libcap-ng0_0.8.3-1+b3_armhf.deb",
+      "Package": "libcap-ng0",
+      "Version": "0.8.3-1+b3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libcap2_1%3a2.66-4+deb12u3+b1_armhf.deb",
+      "sha256": "26c599095f5bdac228385ea99ff82344ab1395c828cb24e7e55da823f3ca2e8c",
+      "filename": "pool/main/libc/libcap2/libcap2_2.66-4+deb12u3+b1_armhf.deb",
+      "Package": "libcap2",
+      "Version": "1:2.66-4+deb12u3+b1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libcom-err2_1.47.0-2+b2_armhf.deb",
+      "sha256": "dc81ddc4e62a2c9a702eac7937aeda9b7e60e852644d18f5afc0290517992d33",
+      "filename": "pool/main/e/e2fsprogs/libcom-err2_1.47.0-2+b2_armhf.deb",
+      "Package": "libcom-err2",
+      "Version": "1.47.0-2+b2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libcrypt1_1%3a4.4.33-2_armhf.deb",
+      "sha256": "6bb061a2279a27ff61791cda6edc8925455e5423e475e5e6c41ad7e04d8efc3c",
+      "filename": "pool/main/libx/libxcrypt/libcrypt1_4.4.33-2_armhf.deb",
+      "Package": "libcrypt1",
+      "Version": "1:4.4.33-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libcryptsetup12_2%3a2.6.1-4~deb12u2_armhf.deb",
+      "sha256": "ed119353661412318f7dc4b92f2ba634810c50bbb6d8dccfdcc46c0eb668f73c",
+      "filename": "pool/main/c/cryptsetup/libcryptsetup12_2.6.1-4~deb12u2_armhf.deb",
+      "Package": "libcryptsetup12",
+      "Version": "2:2.6.1-4~deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libcurl3-gnutls_7.88.1-10+deb12u15_armhf.deb",
+      "sha256": "81d19d83b9c2ac3032d6cdd778b08b2489c346f36080cddaf9703800363affc2",
+      "filename": "pool/main/c/curl/libcurl3-gnutls_7.88.1-10+deb12u15_armhf.deb",
+      "Package": "libcurl3-gnutls",
+      "Version": "7.88.1-10+deb12u15",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libdb5.3_5.3.28+dfsg2-1_armhf.deb",
+      "sha256": "cd3816b76546c2e39de75863e9615d4244dc173e157672a2970e22ee606094be",
+      "filename": "pool/main/d/db5.3/libdb5.3_5.3.28+dfsg2-1_armhf.deb",
+      "Package": "libdb5.3",
+      "Version": "5.3.28+dfsg2-1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libdbus-1-3_1.14.10-1~deb12u1_armhf.deb",
+      "sha256": "758e489c2f937e4a1d272c8079e97505bb0e75f4dbd4bf9aababdefe7101e8c4",
+      "filename": "pool/main/d/dbus/libdbus-1-3_1.14.10-1~deb12u1_armhf.deb",
+      "Package": "libdbus-1-3",
+      "Version": "1.14.10-1~deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libdevmapper1.02.1_2%3a1.02.185-2_armhf.deb",
+      "sha256": "6662a0abcd4b33476903b45d4c5b4ef7a2263ab9a2278cfbfd014c16eb14a425",
+      "filename": "pool/main/l/lvm2/libdevmapper1.02.1_1.02.185-2_armhf.deb",
+      "Package": "libdevmapper1.02.1",
+      "Version": "2:1.02.185-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libduktape207_2.7.0-2_armhf.deb",
+      "sha256": "e54156635832f8cb51c57dab22dbff041e7701c18875034a916b7727a465cb1f",
+      "filename": "pool/main/d/duktape/libduktape207_2.7.0-2_armhf.deb",
+      "Package": "libduktape207",
+      "Version": "2.7.0-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libexpat1_2.5.0-1+deb12u2_armhf.deb",
+      "sha256": "e1cbf8b00e34295cd92865747abf80999218b6511ddc68daffd6b0e5f9fe0d63",
+      "filename": "pool/main/e/expat/libexpat1_2.5.0-1+deb12u2_armhf.deb",
+      "Package": "libexpat1",
+      "Version": "2.5.0-1+deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libfdisk1_2.38.1-5+deb12u3_armhf.deb",
+      "sha256": "6ec8c7a9819a649ea512ef6ef28e47e3d771388197237e359809ecfcf5b56039",
+      "filename": "pool/main/u/util-linux/libfdisk1_2.38.1-5+deb12u3_armhf.deb",
+      "Package": "libfdisk1",
+      "Version": "2.38.1-5+deb12u3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libffi8_3.4.4-1_armhf.deb",
+      "sha256": "c709b6666a6f166b7aaf98c9e89ab17143d5b1d33e6b545e582b6b5da31ec2bd",
+      "filename": "pool/main/libf/libffi/libffi8_3.4.4-1_armhf.deb",
+      "Package": "libffi8",
+      "Version": "3.4.4-1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libfile-find-rule-perl_0.34-4~deb12u1_all.deb",
+      "sha256": "d941143c65e47eff192195ed1b8367d3d74e5a0de668fc5ae9d787383ec48c23",
+      "filename": "pool/main/libf/libfile-find-rule-perl/libfile-find-rule-perl_0.34-4~deb12u1_all.deb",
+      "Package": "libfile-find-rule-perl",
+      "Version": "0.34-4~deb12u1",
+      "Architecture": "all"
+    },
+    {
+      "file": "libgcc-s1_12.2.0-14+deb12u1_armhf.deb",
+      "sha256": "f58562bf01efd6112b914182147ee149e0d4c90869046e31844da8803669eeb3",
+      "filename": "pool/main/g/gcc-12/libgcc-s1_12.2.0-14+deb12u1_armhf.deb",
+      "Package": "libgcc-s1",
+      "Version": "12.2.0-14+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libgcrypt20_1.10.1-3+deb12u1_armhf.deb",
+      "sha256": "e217694621014cbb2849c2d9fd49e3a9ce9219c67c244286f35d277300a07b6f",
+      "filename": "pool/main/libg/libgcrypt20/libgcrypt20_1.10.1-3+deb12u1_armhf.deb",
+      "Package": "libgcrypt20",
+      "Version": "1.10.1-3+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libgdbm-compat4_1.23-3_armhf.deb",
+      "sha256": "9e55a0ac2ea09f37e3cd7d5f81579712314c6dad2c100e878a622c242ecb0d93",
+      "filename": "pool/main/g/gdbm/libgdbm-compat4_1.23-3_armhf.deb",
+      "Package": "libgdbm-compat4",
+      "Version": "1.23-3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libgdbm6_1.23-3_armhf.deb",
+      "sha256": "28b9b49b726c4e359b82ddf9489c3e8f4ae0cd79e045407a3b09799bfa83356e",
+      "filename": "pool/main/g/gdbm/libgdbm6_1.23-3_armhf.deb",
+      "Package": "libgdbm6",
+      "Version": "1.23-3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libglib2.0-0_2.74.6-2+deb12u9_armhf.deb",
+      "sha256": "0b687efd895b4963445b848a0acb931358f85f636365824c308689b1e920223b",
+      "filename": "pool/main/g/glib2.0/libglib2.0-0_2.74.6-2+deb12u9_armhf.deb",
+      "Package": "libglib2.0-0",
+      "Version": "2.74.6-2+deb12u9",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libgmp10_2%3a6.2.1+dfsg1-1.1_armhf.deb",
+      "sha256": "240b6cc98c7fbd4781e8aa90d0bb68ccbc4a0931565cff7565509836bbd807ad",
+      "filename": "pool/main/g/gmp/libgmp10_6.2.1+dfsg1-1.1_armhf.deb",
+      "Package": "libgmp10",
+      "Version": "2:6.2.1+dfsg1-1.1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libgnutls30_3.7.9-2+deb12u7_armhf.deb",
+      "sha256": "99d9641407789e0ee373ae34da3c5670256707534699cb02d0619a5bc0c1d3ca",
+      "filename": "pool/main/g/gnutls28/libgnutls30_3.7.9-2+deb12u7_armhf.deb",
+      "Package": "libgnutls30",
+      "Version": "3.7.9-2+deb12u7",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libgpg-error0_1.46-1_armhf.deb",
+      "sha256": "caa6ee2f9d1e5d7cd21a2bf712be8c836766cfa4fc76853feca7c4e69ec9b7ac",
+      "filename": "pool/main/libg/libgpg-error/libgpg-error0_1.46-1_armhf.deb",
+      "Package": "libgpg-error0",
+      "Version": "1.46-1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libgssapi-krb5-2_1.20.1-2+deb12u5_armhf.deb",
+      "sha256": "e3f674af80e03b04a257eec5d4cb5baf680488b95f9f6eff35a151c1594432b0",
+      "filename": "pool/main/k/krb5/libgssapi-krb5-2_1.20.1-2+deb12u5_armhf.deb",
+      "Package": "libgssapi-krb5-2",
+      "Version": "1.20.1-2+deb12u5",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libhogweed6_3.8.1-2_armhf.deb",
+      "sha256": "428a57916626f0f6b2b80125d4b8754441515997ea6e87f3ef9ae5dcaf1f5867",
+      "filename": "pool/main/n/nettle/libhogweed6_3.8.1-2_armhf.deb",
+      "Package": "libhogweed6",
+      "Version": "3.8.1-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libidn2-0_2.3.3-1+b1_armhf.deb",
+      "sha256": "4bd11a1c6619d311b6b6dd44208d708f18ebcf70ee387a51fde849f783b1fdc8",
+      "filename": "pool/main/libi/libidn2/libidn2-0_2.3.3-1+b1_armhf.deb",
+      "Package": "libidn2-0",
+      "Version": "2.3.3-1+b1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libip4tc2_1.8.9-2_armhf.deb",
+      "sha256": "58587a592958dd3d2769e198ef27f7e8626bfd6f01e97bf9333faa4dff41bac0",
+      "filename": "pool/main/i/iptables/libip4tc2_1.8.9-2_armhf.deb",
+      "Package": "libip4tc2",
+      "Version": "1.8.9-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libjansson4_2.14-2_armhf.deb",
+      "sha256": "4200351f40944a9333152100935b2f53dd8cf3231b30830bb2fcbfb24a200acd",
+      "filename": "pool/main/j/jansson/libjansson4_2.14-2_armhf.deb",
+      "Package": "libjansson4",
+      "Version": "2.14-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libjson-c5_0.16-2_armhf.deb",
+      "sha256": "fbe40b0d8f9fce35950a72527882f49ad82e36be90e7aaa2c1d3f07f4125ff1b",
+      "filename": "pool/main/j/json-c/libjson-c5_0.16-2_armhf.deb",
+      "Package": "libjson-c5",
+      "Version": "0.16-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libk5crypto3_1.20.1-2+deb12u5_armhf.deb",
+      "sha256": "be0457040c22c67f765767f63dc5531f1629f8f4914bcc8992b1edea17f493d0",
+      "filename": "pool/main/k/krb5/libk5crypto3_1.20.1-2+deb12u5_armhf.deb",
+      "Package": "libk5crypto3",
+      "Version": "1.20.1-2+deb12u5",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libkeyutils1_1.6.3-2_armhf.deb",
+      "sha256": "bfc6a3a668b58b88876b9e37192f669ceeb68db6d50c8374a9267a2bbd8f8a8e",
+      "filename": "pool/main/k/keyutils/libkeyutils1_1.6.3-2_armhf.deb",
+      "Package": "libkeyutils1",
+      "Version": "1.6.3-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libkmod2_30+20221128-1_armhf.deb",
+      "sha256": "1cbfaab8e5cf4f54f41bdd372b37b2905fccbcea2599355f405d1cc1f6ce8237",
+      "filename": "pool/main/k/kmod/libkmod2_30+20221128-1_armhf.deb",
+      "Package": "libkmod2",
+      "Version": "30+20221128-1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libkrb5-3_1.20.1-2+deb12u5_armhf.deb",
+      "sha256": "3dac821ed96dd0bfcafe9a1643f81ada7bcae30f64a3b5069fd1322886e6d478",
+      "filename": "pool/main/k/krb5/libkrb5-3_1.20.1-2+deb12u5_armhf.deb",
+      "Package": "libkrb5-3",
+      "Version": "1.20.1-2+deb12u5",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libkrb5support0_1.20.1-2+deb12u5_armhf.deb",
+      "sha256": "85a53b81203d0773809a1a76c20bd92fc2aee7ae063592a8ed8e6499b86706fa",
+      "filename": "pool/main/k/krb5/libkrb5support0_1.20.1-2+deb12u5_armhf.deb",
+      "Package": "libkrb5support0",
+      "Version": "1.20.1-2+deb12u5",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libldap-2.5-0_2.5.13+dfsg-5_armhf.deb",
+      "sha256": "817a72aa1dd85719f1f6d6ed2d95d69794be3a094fb133c0c327395b507b13cd",
+      "filename": "pool/main/o/openldap/libldap-2.5-0_2.5.13+dfsg-5_armhf.deb",
+      "Package": "libldap-2.5-0",
+      "Version": "2.5.13+dfsg-5",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "liblz4-1_1.9.4-1_armhf.deb",
+      "sha256": "a646819a654404c38c219f5df4504ba1c214326daca6a00ce4ad9bb073447fbd",
+      "filename": "pool/main/l/lz4/liblz4-1_1.9.4-1_armhf.deb",
+      "Package": "liblz4-1",
+      "Version": "1.9.4-1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "liblzma5_5.4.1-1+deb12u1_armhf.deb",
+      "sha256": "bfbb78b257213e3d66a8c5940c1f5e922dc3bad5c427c9077324657a5eb78e00",
+      "filename": "pool/main/x/xz-utils/liblzma5_5.4.1-1+deb12u1_armhf.deb",
+      "Package": "liblzma5",
+      "Version": "5.4.1-1+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libmd0_1.0.4-2_armhf.deb",
+      "sha256": "07696488d15dc09da6543bff713846b69291250b5653d77f19d8dbd0a7a32012",
+      "filename": "pool/main/libm/libmd/libmd0_1.0.4-2_armhf.deb",
+      "Package": "libmd0",
+      "Version": "1.0.4-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libmm-glib0_1.20.4-1_armhf.deb",
+      "sha256": "ac902d6509983e504ccd2395b79688e831ef0e56ca5f0e3e086b15c2bb88807f",
+      "filename": "pool/main/m/modemmanager/libmm-glib0_1.20.4-1_armhf.deb",
+      "Package": "libmm-glib0",
+      "Version": "1.20.4-1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libmount1_2.38.1-5+deb12u3_armhf.deb",
+      "sha256": "9c7775558687a076f910a030a0b1ecbfb384aca12d66f193434ce72babf5c250",
+      "filename": "pool/main/u/util-linux/libmount1_2.38.1-5+deb12u3_armhf.deb",
+      "Package": "libmount1",
+      "Version": "2.38.1-5+deb12u3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libndp0_1.8-1+deb12u1_armhf.deb",
+      "sha256": "7d99c701b4ae11b38ec4aa7a49741d34b7546f18568e7215c95ec49675a36352",
+      "filename": "pool/main/libn/libndp/libndp0_1.8-1+deb12u1_armhf.deb",
+      "Package": "libndp0",
+      "Version": "1.8-1+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libnettle8_3.8.1-2_armhf.deb",
+      "sha256": "daae2882b791bcd5054a96e36880eae6ad6434c5d54c7825650706c3ec4db4a7",
+      "filename": "pool/main/n/nettle/libnettle8_3.8.1-2_armhf.deb",
+      "Package": "libnettle8",
+      "Version": "3.8.1-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libnewt0.52_0.52.23-1+b1_armhf.deb",
+      "sha256": "8f0cfc47bd8413c54a2eb3490e6aa97d8feef1e09b368673e7b7365289b80c52",
+      "filename": "pool/main/n/newt/libnewt0.52_0.52.23-1+b1_armhf.deb",
+      "Package": "libnewt0.52",
+      "Version": "0.52.23-1+b1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libnghttp2-14_1.52.0-1+deb12u3_armhf.deb",
+      "sha256": "ef8cb9a1fe21f0f3d804488f4cfaf9959d26f594f387bd382e86f12307832d86",
+      "filename": "pool/main/n/nghttp2/libnghttp2-14_1.52.0-1+deb12u3_armhf.deb",
+      "Package": "libnghttp2-14",
+      "Version": "1.52.0-1+deb12u3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libnl-3-200_3.7.0-0.2+b1_armhf.deb",
+      "sha256": "e5d36f7a39436fa94118617f8954fe0e43ff3b88eba25209390e453868a38a06",
+      "filename": "pool/main/libn/libnl3/libnl-3-200_3.7.0-0.2+b1_armhf.deb",
+      "Package": "libnl-3-200",
+      "Version": "3.7.0-0.2+b1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libnl-genl-3-200_3.7.0-0.2+b1_armhf.deb",
+      "sha256": "97ad97c156ee41386183144f7b64bb02a62ceb15ce1175b6412bccc054b9a56a",
+      "filename": "pool/main/libn/libnl3/libnl-genl-3-200_3.7.0-0.2+b1_armhf.deb",
+      "Package": "libnl-genl-3-200",
+      "Version": "3.7.0-0.2+b1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libnl-route-3-200_3.7.0-0.2+b1_armhf.deb",
+      "sha256": "759190cc308c6e6e5ad83e8e2b17e659cb35dc73969a91f4e30192ad74afb1bb",
+      "filename": "pool/main/libn/libnl3/libnl-route-3-200_3.7.0-0.2+b1_armhf.deb",
+      "Package": "libnl-route-3-200",
+      "Version": "3.7.0-0.2+b1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libnm0_1.42.4-1+deb12u1_armhf.deb",
+      "sha256": "c5f1a8b0f87b50b1b8928aa318fcd955482e9db1f7f6e288187d6b36747d088d",
+      "filename": "pool/main/n/network-manager/libnm0_1.42.4-1+deb12u1_armhf.deb",
+      "Package": "libnm0",
+      "Version": "1.42.4-1+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libnumber-compare-perl_0.03-3_all.deb",
+      "sha256": "cf95662e27037d92c582647400bb1ca7a6dfd2eb26eee5b968b23263cd4976dc",
+      "filename": "pool/main/libn/libnumber-compare-perl/libnumber-compare-perl_0.03-3_all.deb",
+      "Package": "libnumber-compare-perl",
+      "Version": "0.03-3",
+      "Architecture": "all"
+    },
+    {
+      "file": "libp11-kit0_0.24.1-2_armhf.deb",
+      "sha256": "09c653218e180bc8157a077a2c92a5345de0975ec0b4b80f6940dbab88936cab",
+      "filename": "pool/main/p/p11-kit/libp11-kit0_0.24.1-2_armhf.deb",
+      "Package": "libp11-kit0",
+      "Version": "0.24.1-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libpam-modules-bin_1.5.2-6+deb12u2_armhf.deb",
+      "sha256": "9785a2260fd7651d799ec32f4c8aa8239039f7eace4d4c7865052f7eb9d3c9c6",
+      "filename": "pool/main/p/pam/libpam-modules-bin_1.5.2-6+deb12u2_armhf.deb",
+      "Package": "libpam-modules-bin",
+      "Version": "1.5.2-6+deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libpam-modules_1.5.2-6+deb12u2_armhf.deb",
+      "sha256": "89010ca519dce4014dba72b1284893dcaa18ae5f2fa2a538e8dcbf3f1f41ce27",
+      "filename": "pool/main/p/pam/libpam-modules_1.5.2-6+deb12u2_armhf.deb",
+      "Package": "libpam-modules",
+      "Version": "1.5.2-6+deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libpam-runtime_1.5.2-6+deb12u2_all.deb",
+      "sha256": "7a4f26d54c1e3ee8c68095f9d9013d13dd89a33ff78ef87330d21f21235fc278",
+      "filename": "pool/main/p/pam/libpam-runtime_1.5.2-6+deb12u2_all.deb",
+      "Package": "libpam-runtime",
+      "Version": "1.5.2-6+deb12u2",
+      "Architecture": "all"
+    },
+    {
+      "file": "libpam-systemd_252.39-1~deb12u2_armhf.deb",
+      "sha256": "16f96d07207ecee91a870e948e950bcbbd4c6c1f96373497f94740724e09b74f",
+      "filename": "pool/main/s/systemd/libpam-systemd_252.39-1~deb12u2_armhf.deb",
+      "Package": "libpam-systemd",
+      "Version": "252.39-1~deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libpam0g_1.5.2-6+deb12u2_armhf.deb",
+      "sha256": "6d824e137e9fbbe5e68f8c18496dd7a521dd81bd7548e84a2b50d2b351e17125",
+      "filename": "pool/main/p/pam/libpam0g_1.5.2-6+deb12u2_armhf.deb",
+      "Package": "libpam0g",
+      "Version": "1.5.2-6+deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libpcre2-8-0_10.42-1_armhf.deb",
+      "sha256": "71a2a91cf8c22665c596e0426c45ee50815405e20aeedd7627eddeee20bb7a42",
+      "filename": "pool/main/p/pcre2/libpcre2-8-0_10.42-1_armhf.deb",
+      "Package": "libpcre2-8-0",
+      "Version": "10.42-1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libpcsclite1_1.9.9-2_armhf.deb",
+      "sha256": "09458be995526ea52ad391ff9e6b72ca704dc0840a4026f4f48ffc3d2470fc29",
+      "filename": "pool/main/p/pcsc-lite/libpcsclite1_1.9.9-2_armhf.deb",
+      "Package": "libpcsclite1",
+      "Version": "1.9.9-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libperl5.36_5.36.0-7+deb12u3_armhf.deb",
+      "sha256": "46e60ef29014d818f991c695696401cb1d172e6eec35a3ed6c48efb36a5297c5",
+      "filename": "pool/main/p/perl/libperl5.36_5.36.0-7+deb12u3_armhf.deb",
+      "Package": "libperl5.36",
+      "Version": "5.36.0-7+deb12u3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libpolkit-agent-1-0_122-3_armhf.deb",
+      "sha256": "6c50c5b323cd7fcc3bc76a873a91224e55628ddce449b4b3980e223155c487ad",
+      "filename": "pool/main/p/policykit-1/libpolkit-agent-1-0_122-3_armhf.deb",
+      "Package": "libpolkit-agent-1-0",
+      "Version": "122-3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libpolkit-gobject-1-0_122-3_armhf.deb",
+      "sha256": "bc12e77bcba3d33025af880f856f23ebbfc769344355500e86bbcdfad817c5a1",
+      "filename": "pool/main/p/policykit-1/libpolkit-gobject-1-0_122-3_armhf.deb",
+      "Package": "libpolkit-gobject-1-0",
+      "Version": "122-3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libpsl5_0.21.2-1_armhf.deb",
+      "sha256": "f56ff9c1fb6f8e714215f8e233e71b96e0200f21357e7d58bd1849cf30662977",
+      "filename": "pool/main/libp/libpsl/libpsl5_0.21.2-1_armhf.deb",
+      "Package": "libpsl5",
+      "Version": "0.21.2-1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libreadline8_8.2-1.3_armhf.deb",
+      "sha256": "a4eb4a4931012e597080396a23ed10df019e26868bf66d9694eab55c98f6a5c2",
+      "filename": "pool/main/r/readline/libreadline8_8.2-1.3_armhf.deb",
+      "Package": "libreadline8",
+      "Version": "8.2-1.3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "librtmp1_2.4+20151223.gitfa8646d.1-2+b2_armhf.deb",
+      "sha256": "6ab3a47f57ce868e8f4041b10bdf867f247e9846f647ea5eb5b01f34d6a6f7aa",
+      "filename": "pool/main/r/rtmpdump/librtmp1_2.4+20151223.gitfa8646d.1-2+b2_armhf.deb",
+      "Package": "librtmp1",
+      "Version": "2.4+20151223.gitfa8646d.1-2+b2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libsasl2-2_2.1.28+dfsg-10_armhf.deb",
+      "sha256": "79eb02c25f48924572a0bc25bf3b5ab5d1582f5aaeceeba34a0975bbe5409795",
+      "filename": "pool/main/c/cyrus-sasl2/libsasl2-2_2.1.28+dfsg-10_armhf.deb",
+      "Package": "libsasl2-2",
+      "Version": "2.1.28+dfsg-10",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libsasl2-modules-db_2.1.28+dfsg-10_armhf.deb",
+      "sha256": "b7448799d1e0b9265c3819f9214b0c2d198e3843bd576c7c5d301acd5b6f575f",
+      "filename": "pool/main/c/cyrus-sasl2/libsasl2-modules-db_2.1.28+dfsg-10_armhf.deb",
+      "Package": "libsasl2-modules-db",
+      "Version": "2.1.28+dfsg-10",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libseccomp2_2.5.4-1+deb12u1_armhf.deb",
+      "sha256": "5f4f3a2c8bd364f29af9772d4b488cc482a238f434a29dfc89192879d4b46456",
+      "filename": "pool/main/libs/libseccomp/libseccomp2_2.5.4-1+deb12u1_armhf.deb",
+      "Package": "libseccomp2",
+      "Version": "2.5.4-1+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libselinux1_3.4-1+b6_armhf.deb",
+      "sha256": "ca51aaac511bd83291d2d701cd08b12a8bdc4c646d4d6f7eed869c0dc188ebd8",
+      "filename": "pool/main/libs/libselinux/libselinux1_3.4-1+b6_armhf.deb",
+      "Package": "libselinux1",
+      "Version": "3.4-1+b6",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libsemanage-common_3.4-1_all.deb",
+      "sha256": "835f806c21ae25e39053bd3057051640341b0cf08e1db9746fd82e370d82fa30",
+      "filename": "pool/main/libs/libsemanage/libsemanage-common_3.4-1_all.deb",
+      "Package": "libsemanage-common",
+      "Version": "3.4-1",
+      "Architecture": "all"
+    },
+    {
+      "file": "libsemanage2_3.4-1+b5_armhf.deb",
+      "sha256": "98edbbe5cc9c983df60904480276e57a5fc052ae2090137c625776fc696c7f4c",
+      "filename": "pool/main/libs/libsemanage/libsemanage2_3.4-1+b5_armhf.deb",
+      "Package": "libsemanage2",
+      "Version": "3.4-1+b5",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libsepol2_3.4-2.1_armhf.deb",
+      "sha256": "c81bcdc262a0980786f4e6c0c7c62898012420d19c480ec395f03540404f11e9",
+      "filename": "pool/main/libs/libsepol/libsepol2_3.4-2.1_armhf.deb",
+      "Package": "libsepol2",
+      "Version": "3.4-2.1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libslang2_2.3.3-3_armhf.deb",
+      "sha256": "4a3fe6a9cd5581e5e96b57b34824bba837b5ae236b3b952f30aa4a4da9949769",
+      "filename": "pool/main/s/slang2/libslang2_2.3.3-3_armhf.deb",
+      "Package": "libslang2",
+      "Version": "2.3.3-3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libsmartcols1_2.38.1-5+deb12u3_armhf.deb",
+      "sha256": "d5138f992f2302c83a11891be69f4948bf3f1b7f1a9e8c2ffbfc3de2a17b44af",
+      "filename": "pool/main/u/util-linux/libsmartcols1_2.38.1-5+deb12u3_armhf.deb",
+      "Package": "libsmartcols1",
+      "Version": "2.38.1-5+deb12u3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libssh2-1_1.10.0-3+b1_armhf.deb",
+      "sha256": "1c98868656aef1ae5dd8be89e6a8790c63354347773df782298dc6e8b7bf2330",
+      "filename": "pool/main/libs/libssh2/libssh2-1_1.10.0-3+b1_armhf.deb",
+      "Package": "libssh2-1",
+      "Version": "1.10.0-3+b1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libssl3_3.0.20-1~deb12u2_armhf.deb",
+      "sha256": "8e7bfa25f6be0b5b0257e093ffad36f6ccb72f51ead97d8b7e78fafac59184a4",
+      "filename": "pool/main/o/openssl/libssl3_3.0.20-1~deb12u2_armhf.deb",
+      "Package": "libssl3",
+      "Version": "3.0.20-1~deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libsystemd-shared_252.39-1~deb12u2_armhf.deb",
+      "sha256": "67edf98639d0e088f8ab5c386b41497fdc8cd47de7c048324178269b59790123",
+      "filename": "pool/main/s/systemd/libsystemd-shared_252.39-1~deb12u2_armhf.deb",
+      "Package": "libsystemd-shared",
+      "Version": "252.39-1~deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libsystemd0_252.39-1~deb12u2_armhf.deb",
+      "sha256": "fe49d9caa76c1ebc90210936c3aa85aeb6e9bb283d4128b825519887117fdb4d",
+      "filename": "pool/main/s/systemd/libsystemd0_252.39-1~deb12u2_armhf.deb",
+      "Package": "libsystemd0",
+      "Version": "252.39-1~deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libtasn1-6_4.19.0-2+deb12u1_armhf.deb",
+      "sha256": "3b06424dc152426bb67d828d835c5714a4620789c73a703c28873239539136ba",
+      "filename": "pool/main/libt/libtasn1-6/libtasn1-6_4.19.0-2+deb12u1_armhf.deb",
+      "Package": "libtasn1-6",
+      "Version": "4.19.0-2+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libteamdctl0_1.31-1_armhf.deb",
+      "sha256": "40dabb367500234c6bd56a6f5bc4e5f54ca3e6fc86a76e4da8ab1a08d13d7f24",
+      "filename": "pool/main/libt/libteam/libteamdctl0_1.31-1_armhf.deb",
+      "Package": "libteamdctl0",
+      "Version": "1.31-1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libtext-glob-perl_0.11-3_all.deb",
+      "sha256": "b0f1a40c5b26f4e4c83a4f8e1768fcf50ae9aac84b7f807ccb38123b50396f64",
+      "filename": "pool/main/libt/libtext-glob-perl/libtext-glob-perl_0.11-3_all.deb",
+      "Package": "libtext-glob-perl",
+      "Version": "0.11-3",
+      "Architecture": "all"
+    },
+    {
+      "file": "libtinfo6_6.4-4_armhf.deb",
+      "sha256": "5990d010cc1f96d166c1fb1bce06822f14665dc9d83e528b166e129982b09d7b",
+      "filename": "pool/main/n/ncurses/libtinfo6_6.4-4_armhf.deb",
+      "Package": "libtinfo6",
+      "Version": "6.4-4",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libudev1_252.39-1~deb12u2_armhf.deb",
+      "sha256": "094567c28c3dc3930ea8c7b53c5fef7439a84ae42cdfdd4bd58d37c7d3eaaf4c",
+      "filename": "pool/main/s/systemd/libudev1_252.39-1~deb12u2_armhf.deb",
+      "Package": "libudev1",
+      "Version": "252.39-1~deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libunistring2_1.0-2_armhf.deb",
+      "sha256": "238765946297dfea3c383338f5ceaa665a5c870ec014a1cccc639bd1a23cf3b7",
+      "filename": "pool/main/libu/libunistring/libunistring2_1.0-2_armhf.deb",
+      "Package": "libunistring2",
+      "Version": "1.0-2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libuuid1_2.38.1-5+deb12u3_armhf.deb",
+      "sha256": "8e7bdaf72a70a29520cae0d3da81ab814a6954b17dedd33d68b7eebcdc9de56c",
+      "filename": "pool/main/u/util-linux/libuuid1_2.38.1-5+deb12u3_armhf.deb",
+      "Package": "libuuid1",
+      "Version": "2.38.1-5+deb12u3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "libzstd1_1.5.4+dfsg2-5_armhf.deb",
+      "sha256": "a2ca48bc43bb51d3cbc6beb07aefd3fe252859868a4ccb9c1edbfc942786e4b1",
+      "filename": "pool/main/libz/libzstd/libzstd1_1.5.4+dfsg2-5_armhf.deb",
+      "Package": "libzstd1",
+      "Version": "1.5.4+dfsg2-5",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "mount_2.38.1-5+deb12u3_armhf.deb",
+      "sha256": "a3d0020d56eeb7aa3bee7dbb78791c747a8f550a09fd0488cd059b2e4ee2a0a7",
+      "filename": "pool/main/u/util-linux/mount_2.38.1-5+deb12u3_armhf.deb",
+      "Package": "mount",
+      "Version": "2.38.1-5+deb12u3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "ncurses-base_6.4-4_all.deb",
+      "sha256": "bfd1d89f833c09a28b062ee916495cf69649ca2bf529532476c7b69d75d24909",
+      "filename": "pool/main/n/ncurses/ncurses-base_6.4-4_all.deb",
+      "Package": "ncurses-base",
+      "Version": "6.4-4",
+      "Architecture": "all"
+    },
+    {
+      "file": "network-manager_1.42.4-1+deb12u1_armhf.deb",
+      "sha256": "aee1c40d4d97170762a2fc8a8014445f451c82ed9244ecf57ae8aa05081b6b89",
+      "filename": "pool/main/n/network-manager/network-manager_1.42.4-1+deb12u1_armhf.deb",
+      "Package": "network-manager",
+      "Version": "1.42.4-1+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "passwd_1%3a4.13+dfsg1-1+deb12u2_armhf.deb",
+      "sha256": "1826dd02bec4e083e6de53d698a9a16c4106700300cf3cea3b0466899d625a37",
+      "filename": "pool/main/s/shadow/passwd_4.13+dfsg1-1+deb12u2_armhf.deb",
+      "Package": "passwd",
+      "Version": "1:4.13+dfsg1-1+deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "perl-base_5.36.0-7+deb12u3_armhf.deb",
+      "sha256": "d66e9e6d050b1d33465cad2cea5ce309c828ed0c2440ef143df26dc0c79259f4",
+      "filename": "pool/main/p/perl/perl-base_5.36.0-7+deb12u3_armhf.deb",
+      "Package": "perl-base",
+      "Version": "5.36.0-7+deb12u3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "perl-modules-5.36_5.36.0-7+deb12u3_all.deb",
+      "sha256": "3d237ccb1ea32727b6573d43c67d78337aa928a81148d36cef54b369a07c240a",
+      "filename": "pool/main/p/perl/perl-modules-5.36_5.36.0-7+deb12u3_all.deb",
+      "Package": "perl-modules-5.36",
+      "Version": "5.36.0-7+deb12u3",
+      "Architecture": "all"
+    },
+    {
+      "file": "perl_5.36.0-7+deb12u3_armhf.deb",
+      "sha256": "c7594043b97de3a0992a56798608bf66aaa9540a0ebeacaec5bbb2066a4260e4",
+      "filename": "pool/main/p/perl/perl_5.36.0-7+deb12u3_armhf.deb",
+      "Package": "perl",
+      "Version": "5.36.0-7+deb12u3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "polkitd_122-3_armhf.deb",
+      "sha256": "d8923cc6b7209190f8eb8d827f8ca350c3af98c906d68d155cceb11c45ed2a26",
+      "filename": "pool/main/p/policykit-1/polkitd_122-3_armhf.deb",
+      "Package": "polkitd",
+      "Version": "122-3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "readline-common_8.2-1.3_all.deb",
+      "sha256": "69317523fe56429aa361545416ad339d138c1500e5a604856a80dd9074b4e35c",
+      "filename": "pool/main/r/readline/readline-common_8.2-1.3_all.deb",
+      "Package": "readline-common",
+      "Version": "8.2-1.3",
+      "Architecture": "all"
+    },
+    {
+      "file": "sed_4.9-1+deb12u1_armhf.deb",
+      "sha256": "e955673dfabae0c99c45b35b3d0d36467af1a8dcfc165f13cb34819976059f67",
+      "filename": "pool/main/s/sed/sed_4.9-1+deb12u1_armhf.deb",
+      "Package": "sed",
+      "Version": "4.9-1+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "sgml-base_1.31_all.deb",
+      "sha256": "bd69220c46abaec55f0d82f2fa103c3fc89ff7c921ac68f3f242ac790f04a35d",
+      "filename": "pool/main/s/sgml-base/sgml-base_1.31_all.deb",
+      "Package": "sgml-base",
+      "Version": "1.31",
+      "Architecture": "all"
+    },
+    {
+      "file": "systemd-sysv_252.39-1~deb12u2_armhf.deb",
+      "sha256": "7ad20d16d8d8fa7061b3af180fb3bc7deedfacfc829924e1798b5d5494285c67",
+      "filename": "pool/main/s/systemd/systemd-sysv_252.39-1~deb12u2_armhf.deb",
+      "Package": "systemd-sysv",
+      "Version": "252.39-1~deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "systemd_252.39-1~deb12u2_armhf.deb",
+      "sha256": "6c45b45f579455b585243290ca20366fd0b75a6194e2f9b7d7892e9b3e6d550f",
+      "filename": "pool/main/s/systemd/systemd_252.39-1~deb12u2_armhf.deb",
+      "Package": "systemd",
+      "Version": "252.39-1~deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "tar_1.34+dfsg-1.2+deb12u1_armhf.deb",
+      "sha256": "0c175f51c666eedb0caacc02132933077ad303788896b8d78274e7422a5feff9",
+      "filename": "pool/main/t/tar/tar_1.34+dfsg-1.2+deb12u1_armhf.deb",
+      "Package": "tar",
+      "Version": "1.34+dfsg-1.2+deb12u1",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "udev_252.39-1~deb12u2_armhf.deb",
+      "sha256": "be309f90a5df0fe378928179d1c67c07e27e6d9dbe660216dfa7dcbb80ea7921",
+      "filename": "pool/main/s/systemd/udev_252.39-1~deb12u2_armhf.deb",
+      "Package": "udev",
+      "Version": "252.39-1~deb12u2",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "usrmerge_37~deb12u1_all.deb",
+      "sha256": "8a25318213244f075b56363408c87a519ed8cef24b270c3d045ef35d695de13a",
+      "filename": "pool/main/u/usrmerge/usrmerge_37~deb12u1_all.deb",
+      "Package": "usrmerge",
+      "Version": "37~deb12u1",
+      "Architecture": "all"
+    },
+    {
+      "file": "wpasupplicant_2%3a2.10-12+deb12u3_armhf.deb",
+      "sha256": "706d04f55d2fe6af101860649d7886524cc4bb15f7d493055a619689720a4e8c",
+      "filename": "pool/main/w/wpa/wpasupplicant_2.10-12+deb12u3_armhf.deb",
+      "Package": "wpasupplicant",
+      "Version": "2:2.10-12+deb12u3",
+      "Architecture": "armhf"
+    },
+    {
+      "file": "xml-core_0.18+nmu1_all.deb",
+      "sha256": "fcc5e2dfd3c6d1ffb50a73d9fd1d562724644f4ad779c7f695fea04e68febb0e",
+      "filename": "pool/main/x/xml-core/xml-core_0.18+nmu1_all.deb",
+      "Package": "xml-core",
+      "Version": "0.18+nmu1",
+      "Architecture": "all"
+    },
+    {
+      "file": "zlib1g_1%3a1.2.13.dfsg-1_armhf.deb",
+      "sha256": "b52fcc443085ff9c676648b4d0fc97cd31b8f119bdd4e7534e50b6e9386502ba",
+      "filename": "pool/main/z/zlib/zlib1g_1.2.13.dfsg-1_armhf.deb",
+      "Package": "zlib1g",
+      "Version": "1:1.2.13.dfsg-1",
+      "Architecture": "armhf"
+    }
+  ]
+}

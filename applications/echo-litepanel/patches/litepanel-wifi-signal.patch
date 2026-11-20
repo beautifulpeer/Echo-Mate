@@ -1,0 +1,72 @@
+--- a/connections.py
++++ b/connections.py
+@@ -19,7 +19,7 @@
+ BLE_SCAN_LOCK = threading.Lock()
+ BLE_NOTIFY_UUID = '6e400003-b5a3-f393-e0a9-e50e24dcca9e'
+ BLE_WRITE_UUID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e'
+-FIELDS = {"battery", "voltage", "temperature", "humidity", "channels", "pwm", "color", "light", "speed", "gimbal_pan", "gimbal_tilt", "direction", "rate", "settings", "breathe_hz", "audio_playing", "audio_volume", "voice_listen", "voice_talk", "voice_rx_frames", "voice_tx_frames", "voice_mic_peak", "wifi_rssi", "rssi"}
++FIELDS = {"battery", "voltage", "temperature", "humidity", "channels", "pwm", "color", "light", "speed", "gimbal_pan", "gimbal_tilt", "direction", "rate", "settings", "breathe_hz", "audio_playing", "audio_volume", "voice_listen", "voice_talk", "voice_rx_frames", "voice_tx_frames", "voice_mic_peak", "wifi_rssi", "rssi", "wifi_signal_age_ms"}
+ 
+ 
+ def dependencies():
+@@ -206,7 +206,7 @@
+                             elif key in ("breathe_hz", "audio_volume"):
+                                 if type(value) not in (int, float) or not math.isfinite(value) or not 0 <= value <= 100:
+                                     raise ValueError("breathe_hz must be between 0 and 100")
+-                            elif key in ("battery", "voltage", "temperature", "humidity", "pwm", "speed", "gimbal_pan", "gimbal_tilt", "rate", "voice_rx_frames", "voice_tx_frames", "voice_mic_peak", "wifi_rssi", "rssi"):
++                            elif key in ("battery", "voltage", "temperature", "humidity", "pwm", "speed", "gimbal_pan", "gimbal_tilt", "rate", "voice_rx_frames", "voice_tx_frames", "voice_mic_peak", "wifi_rssi", "rssi", "wifi_signal_age_ms"):
+                                 if type(value) not in (int, float) or not math.isfinite(value):
+                                     raise ValueError("数值字段无效")
+                             elif key in ("light", "audio_playing", "voice_listen", "voice_talk") and not isinstance(value, bool):
+--- a/web/workbench.js
++++ b/web/workbench.js
+@@ -78,6 +78,25 @@
+   }catch{panel.classList.toggle('expanded-waveform');draw();}
+ };
+ document.addEventListener('fullscreenchange',()=>{$('wave-fullscreen').textContent=document.fullscreenElement?'退出全屏':'全屏';draw();});
++function deviceSignal(connection) {
++  const values=connection?.values||{};
++  const wifi=Number.isFinite(values.wifi_rssi)||Object.hasOwn(values,'wifi_signal_age_ms');
++  const strength=wifi?values.wifi_rssi:values.rssi;
++  const age=values.wifi_signal_age_ms;
++  const expired=!!connection?.stale||(wifi&&Number.isFinite(age)&&(age<0||age>15000));
++  const valid=!!connection?.connected&&!expired&&Number.isFinite(strength)&&strength>=-127&&strength<=0;
++  const bars=valid?(strength>=-55?4:strength>=-67?3:strength>=-80?2:1):0;
++  const quality=['未上报','较弱','一般','良好','很好'][bars];
++  const medium=wifi?'设备 Wi-Fi':connection?.kind==='ble'?'蓝牙':'无线信号';
++  return {bars,label:`${medium}：${valid?`${quality}（${strength} dBm，${bars}/4 格）`:expired?'数据已过期':'未上报'}`};
++}
++function signalIndicator(connection) {
++  const info=deviceSignal(connection),button=document.createElement('button');
++  button.className='signal-strength';button.type='button';button.title=info.label;
++  button.setAttribute('aria-label',info.label);button.onclick=()=>toast(info.label);
++  for(let i=0;i<4;i++){const bar=document.createElement('i');bar.classList.toggle('on',i<info.bars);button.append(bar);}
++  return button;
++}
+ const workbenchUpdate = update;
+ update = next => {
+   const session = `${next.device_id||''}:${next.connection?.kind}:${next.connection?.session_id||''}`;
+@@ -88,8 +107,9 @@
+   if(!next.connected)autoPreviewSession=null;
+   workbenchUpdate(next);
+   const rate=next.connection?.packet_rate;$('packet-rate').textContent=' · 得包率 '+(Number.isFinite(rate)?rate.toFixed(1)+'%':'—');$('packet-rate').title='按设备采样序号统计；无序号时不估算';
+-  const strength=next.connection?.values?.wifi_rssi??next.connection?.values?.rssi;
+-  $('wireless-status').textContent=`${connectionNames[next.connection?.kind]||'连接'} · 信号强度：${Number.isFinite(strength)?strength+' dBm':'未上报'} · ${next.connected?(next.connection?.stale?'链路已连，数据已过期':'已连接'):'已断开'}`;
++  const signal=deviceSignal(next.connection);
++  $('wireless-status').textContent=`${connectionNames[next.connection?.kind]||'连接'} · ${signal.label} · ${next.connected?(next.connection?.stale?'链路已连，数据已过期':'已连接'):'已断开'}`;
++  $('wireless-status').append(signalIndicator(next.connection));
+   $('capture-start').disabled=!next.connected||next.recording||window.captureBusy;
+   $('capture-stop').disabled=(!next.recording&&!previewing)||window.captureBusy;
+   $('preview-start').disabled=!next.connected||next.recording||window.captureBusy;
+@@ -185,10 +205,7 @@
+       const rssi=c.values?.wifi_rssi??c.values?.rssi;
+       detail.textContent=`${connectionNames[c.kind]||c.kind} · ${c.connected?'已连接':'已断开'}${c.stale?' · 等待上报':''}`;
+       if(['ble','wifi','mqtt'].includes(c.kind)){
+-        const signal=document.createElement('button');signal.className='signal-strength';signal.type='button';
+-        signal.title=Number.isFinite(rssi)?rssi+' dBm':'信号强度未上报';signal.setAttribute('aria-label',signal.title);signal.onclick=()=>toast(signal.title);
+-        const level=!Number.isFinite(rssi)?0:rssi>=-55?4:rssi>=-67?3:rssi>=-80?2:1;
+-        for(let i=0;i<4;i++){const bar=document.createElement('i');bar.classList.toggle('on',i<level);signal.append(bar);}detail.append(signal);
++        const signal=signalIndicator(c);detail.append(signal);
+       }
+       if(!c.connected&&c.error){const reason=document.createElement('small');reason.textContent=c.error;detail.append(reason);}
+       info.append(name,detail);row.append(info);

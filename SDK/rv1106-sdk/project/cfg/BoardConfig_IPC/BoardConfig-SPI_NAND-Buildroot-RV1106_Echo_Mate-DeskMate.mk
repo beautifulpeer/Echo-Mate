@@ -106,3 +106,8 @@ export RK_ENABLE_ROCKCHIP_TEST=y
 # enable external wifi module
 export RK_ENABLE_WIFI=y
 export RK_ENABLE_WIFI_CHIP=RTL8723BS
+
+# Optional network-first image; the normal USB display image stays available.
+if [ "${ECHOMATE_NETWORK_IMAGE:-0}" = 1 ]; then
+    export RK_POST_BUILD_SCRIPT=echo-network-post.sh
+fi

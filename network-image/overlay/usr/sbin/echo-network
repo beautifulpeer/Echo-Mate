@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+"""Small network helper for the vendor uClibc image; not NetworkManager."""
+import getpass
+import hashlib
+import os
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+
+SERVICE = '/etc/init.d/S99znetwork'
+
+
+def run(*args, check=True):
+    return subprocess.run(args, check=check)
+
+
+def connect(ssid, password):
+    encoded = ssid.encode('utf-8')
+    if not 1 <= len(encoded) <= 32:
+        raise ValueError('SSID must contain 1..32 UTF-8 bytes')
+    if not 8 <= len(password.encode('utf-8')) <= 63:
+        raise ValueError('WPA2 password must contain 8..63 bytes')
+    psk = hashlib.pbkdf2_hmac('sha1', password.encode(), encoded, 4096, 32).hex()
+    folder = Path('/userdata/network')
+    folder.mkdir(mode=0o700, parents=True, exist_ok=True)
+    folder.chmod(0o700)
+    config = ('ctrl_interface=/var/run/wpa_supplicant\nupdate_config=0\n'
+              'ap_scan=1\nnetwork={\n'
+              f'    ssid={encoded.hex()}\n    psk={psk}\n'
+              '    key_mgmt=WPA-PSK\n    scan_ssid=1\n}\n')
+    fd, name = tempfile.mkstemp(dir=folder)
+    try:
+        with os.fdopen(fd, 'w') as stream:
+            stream.write(config)
+        os.replace(name, folder / 'wpa_supplicant.conf')
+    finally:
+        if os.path.exists(name):
+            os.unlink(name)
+    run(SERVICE, 'restart')
+    print('Saved. Run echo-network status after association and DHCP complete.')
+
+
+def status():
+    run('ifconfig', '-a', check=False)
+    run('route', '-n', check=False)
+    run('wpa_cli', '-i', 'wlan0', 'status', check=False)
+    print(Path('/etc/resolv.conf').read_text())
+
+
+def scan():
+    run('ifconfig', 'wlan0', 'up')
+    run('iw', 'dev', 'wlan0', 'scan')
+
+
+def usb_share():
+    run('ifconfig', 'usb0', '192.168.137.100', 'netmask', '255.255.255.0', 'up')
+    # Reachability check avoids pointing DNS at a disconnected host.
+    run('ping', '-c', '1', '-W', '3', '192.168.137.1')
+    run('route', 'add', 'default', 'gw', '192.168.137.1', 'metric', '600', 'dev', 'usb0', check=False)
+    routes = subprocess.check_output(['route', '-n'], text=True)
+    wifi_default = any(line.startswith('0.0.0.0') and line.split()[-1] == 'wlan0'
+                       for line in routes.splitlines())
+    if not wifi_default:
+        Path('/etc/resolv.conf').write_text('nameserver 192.168.137.1\n')
+    print('USB sharing configured; the computer must have Internet sharing enabled.')
+
+
+def dialog(*args):
+    result = subprocess.run(['dialog', '--stdout', *args], stdout=subprocess.PIPE, text=True)
+    return result.stdout.rstrip('\n') if result.returncode == 0 else None
+
+
+def menu():
+    while True:
+        choice = dialog('--title', 'Echo-Mate Network', '--menu', 'Choose action', '17', '64', '5',
+                        'wifi', 'Connect Wi-Fi (WPA2)', 'scan', 'Scan Wi-Fi',
+                        'status', 'Addresses and connection status',
+                        'usb', 'Enable Windows USB Internet sharing', 'quit', 'Exit')
+        if choice in (None, 'quit'):
+            return
+        if choice == 'wifi':
+            ssid = dialog('--inputbox', 'Wi-Fi SSID (2.4 GHz)', '9', '64')
+            if ssid is None:
+                continue
+            password = dialog('--insecure', '--passwordbox', 'Wi-Fi password', '9', '64')
+            if password is None:
+                continue
+            connect(ssid, password)
+        else:
+            {'scan': scan, 'status': status, 'usb': usb_share}[choice]()
+        input('Press Enter to return...')
+
+
+def main():
+    action = sys.argv[1] if len(sys.argv) > 1 else 'menu'
+    if os.geteuid() != 0:
+        raise ValueError('Run as root')
+    if action == 'connect':
+        ssid = sys.argv[2] if len(sys.argv) > 2 else input('SSID: ')
+        connect(ssid, getpass.getpass('Wi-Fi password: '))
+    elif action in ('menu', 'scan', 'status', 'usb-share'):
+        {'menu': menu, 'scan': scan, 'status': status, 'usb-share': usb_share}[action]()
+    else:
+        raise ValueError('Usage: echo-network [menu|scan|connect [SSID]|status|usb-share]')
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except (ValueError, OSError, subprocess.CalledProcessError) as error:
+        print(str(error), file=sys.stderr)
+        sys.exit(1)

@@ -1,0 +1,11 @@
+{
+  "host": "",
+  "port": 443,
+  "tls": true,
+  "device_id": "echo-mate001",
+  "username": "echo-mate001",
+  "password": "",
+  "camera_fps": 20,
+  "transport": "websockets",
+  "ws_path": "/mqtt"
+}

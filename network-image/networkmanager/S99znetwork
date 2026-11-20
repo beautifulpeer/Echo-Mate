@@ -1,0 +1,51 @@
+#!/bin/sh
+# NetworkManager exclusively manages Wi-Fi. USB static networking stays separate.
+NM_PID=/run/NetworkManager/NetworkManager.pid
+WPA_PID=/run/NetworkManager/wpa.pid
+
+stop_pid() {
+    [ -s "$1" ] || return 0
+    pid=$(cat "$1")
+    case "$pid" in ''|*[!0-9]*) return 1 ;; esac
+    kill "$pid" 2>/dev/null || true
+    n=0
+    while kill -0 "$pid" 2>/dev/null && [ "$n" -lt 20 ]; do
+        sleep .1
+        n=$((n + 1))
+    done
+    if kill -0 "$pid" 2>/dev/null; then
+        echo "Process $pid did not exit; refusing a duplicate network service" >&2
+        return 1
+    fi
+    rm -f "$1"
+}
+
+case "${1:-}" in
+start)
+    mkdir -p /run/NetworkManager /userdata/NetworkManager/system-connections /userdata/NetworkManager/state /var/log
+    chmod 700 /userdata/NetworkManager /userdata/NetworkManager/system-connections
+    [ -s "$NM_PID" ] && kill -0 "$(cat "$NM_PID")" 2>/dev/null && exit 0
+    # Stop only the legacy helper's recorded processes, not unrelated daemons.
+    stop_pid /var/run/echo-udhcpc.pid || exit 1
+    stop_pid /var/run/echo-wpa.pid || exit 1
+    dbus-uuidgen --ensure=/etc/machine-id || exit 1
+    if [ ! -S /run/dbus/system_bus_socket ]; then
+        /etc/init.d/S30dbus start || exit 1
+    fi
+    # Dedicated D-Bus-enabled supplicant from the isolated glibc runtime.
+    if ! { [ -s "$WPA_PID" ] && kill -0 "$(cat "$WPA_PID")" 2>/dev/null; }; then
+        /usr/sbin/wpa_supplicant-nm -B -u -s -P "$WPA_PID" || exit 1
+    fi
+    /usr/sbin/NetworkManager --debug --log-level=INFO --pid-file="$NM_PID" \
+        >>/var/log/NetworkManager.log 2>&1 &
+    echo $! > "$NM_PID"
+    ;;
+stop)
+    stop_pid "$NM_PID" || exit 1
+    stop_pid "$WPA_PID" || exit 1
+    ;;
+restart|reload)
+    "$0" stop && "$0" start
+    ;;
+*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

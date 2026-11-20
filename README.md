@@ -81,6 +81,16 @@ sh start_minimax.sh
 
 完整 SPI-NAND 镜像构建：按 SDK 文档安装依赖后，执行 `bash build-echomate-full-image.sh`；其他板型请先阅读 SDK 文档选择对应配置。Python 启动脚本默认使用当前环境的 `python3`，也可通过 `PYTHON` 指定解释器。
 
+优先联网、关闭 USB 副屏的 SPI-NAND 镜像：执行 `bash build-echomate-network-image.sh`。USB 网络共享和 Wi-Fi 菜单的使用方法、真正 nmtui 的兼容性限制见 [联网镜像说明](network-image/README.md)。
+
+需要真正的 **nmtui / nmcli / NetworkManager**：使用 `bash build-echomate-nmtui-image.sh`，产物为 `artifacts/echomate-nmtui/update.img`。此版本给网络组件提供独立 glibc 运行目录，保留原 uClibc 硬件应用；详见 [nmtui 镜像说明](network-image/networkmanager/README.md)。
+
+**USB 驱动冲突修正版**：使用 `bash build-echomate-usbfix-image.sh`，产物为 `artifacts/echomate-nmtui-usbfix/`。该版本避免 ADB 的设备 ID，增加 USB COM 登录入口并保留真正 nmtui；优先按 [USB 连接说明](network-image/USB-RECOVERY.md) 使用此版本。
+
+**Wi-Fi 插件归属修正版**：使用 `bash build-echomate-wifi-fix-image.sh --package-only`（已有编译结果时），产物为 `artifacts/echomate-nmtui-wifi-fix/`。保留 USB 修复，并直接校验镜像内的插件归属；详见 [Wi-Fi 修复说明](network-image/WIFI-FIX.md)。
+
+对接云端 LitePanel 的独立 RV1106 应用位于 [applications/echo-litepanel](applications/echo-litepanel/README.md)，复用原电机接线，通过设备主动连接 MQTT 的方式接入云端；云端地址和账号预留。执行 `bash applications/echo-litepanel/build-image.sh` 可生成包含该服务的镜像。
+
 保留运行依赖、模型、交叉编译工具链和 USB 副屏安装文件；日志、旧备份、构建缓存和本机凭据不随发布。全量镜像编译与设备烧录尚需在对应环境验证。
 
 SDK开发环境与系统配置详见SDK文件夹中的[README.md](./SDK/README.md).

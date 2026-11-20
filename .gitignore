@@ -28,3 +28,4 @@ model.pt.parts/
 *.bak
 *.bak.*
 *.before-*
+artifacts/

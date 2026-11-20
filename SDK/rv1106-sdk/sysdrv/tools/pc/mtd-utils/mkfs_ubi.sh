@@ -187,7 +187,10 @@ function mk_ubi_image_fake()
 					UBI_COMPRESSION_TPYE=lzo
 					;;
 			esac
-			echo "$MKUBIFS_TOOL -x $UBI_COMPRESSION_TPYE -e $ubifs_lebsize -m $ubifs_miniosize -c $ubifs_maxlebcnt -d $UBI_SRC_DIR -F -v -o $temp_image" >> $UBI_IMAGE_FAKEROOT
+			# The bundled mkfs.ubifs is statically linked: fakeroot's LD_PRELOAD
+			# cannot intercept its stat() calls. Enforce the root ownership that
+			# the chown below intends, inside the image rather than on the host.
+			echo "$MKUBIFS_TOOL -U -x $UBI_COMPRESSION_TPYE -e $ubifs_lebsize -m $ubifs_miniosize -c $ubifs_maxlebcnt -d $UBI_SRC_DIR -F -v -o $temp_image" >> $UBI_IMAGE_FAKEROOT
 			;;
 	esac
 

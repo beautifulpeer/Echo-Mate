@@ -1,0 +1,31 @@
+#!/bin/sh
+PID=/var/run/echo-wpa.pid
+DHCP_PID=/var/run/echo-udhcpc.pid
+CONF=/userdata/network/wpa_supplicant.conf
+case "${1:-}" in
+start)
+    [ -s "$CONF" ] || exit 0
+    [ -s "$PID" ] && kill -0 "$(cat "$PID")" 2>/dev/null && exit 0
+    # Driver loading is asynchronous in S99start_echo_defconfig.
+    n=0
+    while [ ! -d /sys/class/net/wlan0 ] && [ "$n" -lt 20 ]; do
+        sleep 1
+        n=$((n + 1))
+    done
+    [ -d /sys/class/net/wlan0 ] || exit 1
+    mkdir -p /var/run/wpa_supplicant
+    ifconfig wlan0 up || exit 1
+    /usr/sbin/wpa_supplicant -B -P "$PID" -D nl80211,wext -i wlan0 -c "$CONF" || exit 1
+    udhcpc -b -i wlan0 -p "$DHCP_PID" -t 5 -T 3
+    ;;
+stop)
+    for file in "$DHCP_PID" "$PID"; do
+        if [ -s "$file" ]; then
+            kill "$(cat "$file")" 2>/dev/null || true
+            rm -f "$file"
+        fi
+    done
+    ;;
+restart|reload) "$0" stop; "$0" start ;;
+*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac

@@ -1,0 +1,120 @@
+--- a/connections.py
++++ b/connections.py
+@@ -176,7 +176,7 @@
+                                 self.last_command = command
+                     elif message.get("type") == "audio":
+                         validate_audio(payload)
+-                        if self.config["kind"] == "wifi":
++                        if self.config["kind"] in ("wifi", "mqtt"):
+                             self.audio_in.append((time.monotonic(), payload))
+                     elif message.get("type") in ("telemetry", "status"):
+                         values = {key: value for key, value in payload.items() if key in FIELDS}
+@@ -272,7 +272,7 @@
+ 
+     def send_audio(self, payload):
+         validate_audio(payload)
+-        if self.config['kind'] != 'wifi' or not self.connected:
++        if self.config['kind'] not in ('wifi', 'mqtt') or not self.connected:
+             raise ValueError('实时对讲请连接 Wi-Fi 设备')
+         message = wire.encode(dict(v=1, type='audio', payload=payload))
+         with self.lock:
+--- a/server.py
++++ b/server.py
+@@ -305,7 +305,7 @@
+                 self.reply({'error': '音频模块未启用'}, 403)
+                 return
+             session = MANAGER.session
+-            self.reply({'session_id': session.identifier if session else None, 'frames': session.receive_audio() if session and session.config['kind'] == 'wifi' else []})
++            self.reply({'session_id': session.identifier if session else None, 'frames': session.receive_audio() if session and session.config['kind'] in ('wifi', 'mqtt') else []})
+         elif self.path == '/api/devices':
+             self.reply({'active_id': MANAGER.active_id, 'devices': MANAGER.device_list()})
+         elif self.path == "/api/state":
+@@ -441,7 +441,7 @@
+                 raise ValueError("请求必须是 JSON 对象")
+             if self.path == '/api/audio':
+                 require_module('audio')
+-                if MANAGER.kind != 'wifi' or not MANAGER.session:
++                if MANAGER.kind not in ('wifi', 'mqtt') or not MANAGER.session:
+                     raise ValueError('实时对讲请连接 Wi-Fi 设备')
+                 if body.get('session_id') != MANAGER.session.identifier:
+                     raise ValueError('设备连接已变更')
+@@ -564,7 +564,7 @@
+                 elif valid_control(key, value):
+                     if key in ('voice_listen', 'voice_talk') and (not MANAGER.session or body.get('session_id') != MANAGER.session.identifier):
+                         raise ValueError('设备连接已变更')
+-                    if key in ('voice_listen', 'voice_talk') and MANAGER.kind != 'wifi':
++                    if key in ('voice_listen', 'voice_talk') and MANAGER.kind not in ('wifi', 'mqtt'):
+                         raise ValueError('实时对讲请连接 Wi-Fi 设备')
+                     if MANAGER.kind != "simulation":
+                         if MANAGER.session.snapshot()["stale"] and not (key == "direction" and value == "stop"):
+--- a/web/voice.js
++++ b/web/voice.js
+@@ -6,7 +6,7 @@
+   const sources = new Set(), queue = [];
+   const status = text => $('voice-status').textContent = text;
+   function check() {
+-    if (!state?.connected || state.connection?.kind !== 'wifi' || state.connection.stale || replay) throw Error('实时对讲请先连接 Wi-Fi 设备并退出回放');
++    if (!state?.connected || !['wifi', 'mqtt'].includes(state.connection?.kind) || state.connection.stale || replay) throw Error('实时对讲请先连接 Wi-Fi 设备并退出回放');
+     return state.connection.session_id;
+   }
+   async function prepare() { if (!context || context.state === 'closed') context = new AudioContext(); await context.resume(); }
+--- a/projects/litepanel/上位机/connections.py
++++ b/projects/litepanel/上位机/connections.py
+@@ -176,7 +176,7 @@
+                                 self.last_command = command
+                     elif message.get("type") == "audio":
+                         validate_audio(payload)
+-                        if self.config["kind"] == "wifi":
++                        if self.config["kind"] in ("wifi", "mqtt"):
+                             self.audio_in.append((time.monotonic(), payload))
+                     elif message.get("type") in ("telemetry", "status"):
+                         values = {key: value for key, value in payload.items() if key in FIELDS}
+@@ -272,7 +272,7 @@
+ 
+     def send_audio(self, payload):
+         validate_audio(payload)
+-        if self.config['kind'] != 'wifi' or not self.connected:
++        if self.config['kind'] not in ('wifi', 'mqtt') or not self.connected:
+             raise ValueError('实时对讲请连接 Wi-Fi 设备')
+         message = wire.encode(dict(v=1, type='audio', payload=payload))
+         with self.lock:
+--- a/projects/litepanel/上位机/server.py
++++ b/projects/litepanel/上位机/server.py
+@@ -305,7 +305,7 @@
+                 self.reply({'error': '音频模块未启用'}, 403)
+                 return
+             session = MANAGER.session
+-            self.reply({'session_id': session.identifier if session else None, 'frames': session.receive_audio() if session and session.config['kind'] == 'wifi' else []})
++            self.reply({'session_id': session.identifier if session else None, 'frames': session.receive_audio() if session and session.config['kind'] in ('wifi', 'mqtt') else []})
+         elif self.path == '/api/devices':
+             self.reply({'active_id': MANAGER.active_id, 'devices': MANAGER.device_list()})
+         elif self.path == "/api/state":
+@@ -441,7 +441,7 @@
+                 raise ValueError("请求必须是 JSON 对象")
+             if self.path == '/api/audio':
+                 require_module('audio')
+-                if MANAGER.kind != 'wifi' or not MANAGER.session:
++                if MANAGER.kind not in ('wifi', 'mqtt') or not MANAGER.session:
+                     raise ValueError('实时对讲请连接 Wi-Fi 设备')
+                 if body.get('session_id') != MANAGER.session.identifier:
+                     raise ValueError('设备连接已变更')
+@@ -564,7 +564,7 @@
+                 elif valid_control(key, value):
+                     if key in ('voice_listen', 'voice_talk') and (not MANAGER.session or body.get('session_id') != MANAGER.session.identifier):
+                         raise ValueError('设备连接已变更')
+-                    if key in ('voice_listen', 'voice_talk') and MANAGER.kind != 'wifi':
++                    if key in ('voice_listen', 'voice_talk') and MANAGER.kind not in ('wifi', 'mqtt'):
+                         raise ValueError('实时对讲请连接 Wi-Fi 设备')
+                     if MANAGER.kind != "simulation":
+                         if MANAGER.session.snapshot()["stale"] and not (key == "direction" and value == "stop"):
+--- a/projects/litepanel/上位机/web/voice.js
++++ b/projects/litepanel/上位机/web/voice.js
+@@ -6,7 +6,7 @@
+   const sources = new Set(), queue = [];
+   const status = text => $('voice-status').textContent = text;
+   function check() {
+-    if (!state?.connected || state.connection?.kind !== 'wifi' || state.connection.stale || replay) throw Error('实时对讲请先连接 Wi-Fi 设备并退出回放');
++    if (!state?.connected || !['wifi', 'mqtt'].includes(state.connection?.kind) || state.connection.stale || replay) throw Error('实时对讲请先连接 Wi-Fi 设备并退出回放');
+     return state.connection.session_id;
+   }
+   async function prepare() { if (!context || context.state === 'closed') context = new AudioContext(); await context.resume(); }

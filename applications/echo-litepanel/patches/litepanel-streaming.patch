@@ -1,0 +1,229 @@
+--- a/server.py
++++ b/server.py
+@@ -265,7 +265,8 @@
+                 self.reply({"error": "用户名或密码不正确"}, 401)
+                 return
+             token = hmac.new(key.encode(), b"litepanel-lan-session", hashlib.sha256).hexdigest()
+-            self.reply({"ok": True}, headers={"Set-Cookie": f"litepanel_session={token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800"})
++            secure_cookie = "; Secure" if self.headers.get("X-Forwarded-Proto") == "https" else ""
++            self.reply({"ok": True}, headers={"Set-Cookie": f"litepanel_session={token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800{secure_cookie}"})
+         except (ValueError, TypeError):
+             self.reply({"error": "登录请求无效"}, 400)
+ 
+@@ -434,7 +435,7 @@
+             return
+         try:
+             length = int(self.headers.get("Content-Length", "0"))
+-            if not 0 < length < 4096:
++            if not 0 < length < (16384 if self.path == "/api/audio" else 4096):
+                 raise ValueError("请求长度无效")
+             body = json.loads(self.rfile.read(length))
+             if not isinstance(body, dict):
+@@ -445,7 +446,14 @@
+                     raise ValueError('实时对讲请连接 Wi-Fi 设备')
+                 if body.get('session_id') != MANAGER.session.identifier:
+                     raise ValueError('设备连接已变更')
+-                MANAGER.session.send_audio(body.get('payload'))
++                frames = body.get('frames') if 'frames' in body else [body.get('payload')]
++                if not isinstance(frames, list) or not 1 <= len(frames) <= 8:
++                    raise ValueError('语音批次必须包含 1～8 帧')
++                from connections import validate_audio
++                for payload in frames:
++                    validate_audio(payload)
++                for payload in frames:
++                    MANAGER.session.send_audio(payload)
+                 self.reply({'ok': True})
+                 return
+             if self.path == "/api/wifi/provision-qr":
+--- a/connections.py
++++ b/connections.py
+@@ -501,13 +501,16 @@
+             client.connect(self.config["host"], self.config["port"], keepalive=30)
+             client.loop_start()
+             while not self.stop.wait(.03):
+-                try:
+-                    message = self.next_message()
+-                except queue.Empty:
+-                    continue
+-                result = client.publish(self.config["down_topic"], message, qos=0, retain=False)
+-                if result.rc != mqtt.MQTT_ERR_SUCCESS:
+-                    raise ConnectionError("MQTT 发送失败")
++                # Drain a bounded burst so PCM frames do not compete for one
++                # 30ms slot with control heartbeats and capability ACKs.
++                for _ in range(8):
++                    try:
++                        message = self.next_message()
++                    except queue.Empty:
++                        break
++                    result = client.publish(self.config["down_topic"], message, qos=0, retain=False)
++                    if result.rc != mqtt.MQTT_ERR_SUCCESS:
++                        raise ConnectionError("MQTT 发送失败")
+         finally:
+             client.disconnect()
+             client.loop_stop()
+--- a/web/voice.js
++++ b/web/voice.js
+@@ -1,7 +1,7 @@
+ // 独立于遥测/录制的 Wi-Fi 语音通道；只有按住按钮才采集电脑麦克风。
+ (() => {
+   let context, stream, capture, microphone, listening = false, pressed = false, epoch = 0;
+-  let sentFrames = 0, receivedFrames = 0;
++  let sentFrames = 0, receivedFrames = 0, micPeak = 0, captureReady = false;
+   let next = 0, polling = false, sending = false, session = null;
+   const sources = new Set(), queue = [];
+   const status = text => $('voice-status').textContent = text;
+@@ -11,7 +11,7 @@
+   }
+   async function prepare() { if (!context || context.state === 'closed') context = new AudioContext(); await context.resume(); }
+   function flush() { for (const source of sources) { try { source.stop(); } catch (_) {} } sources.clear(); next = 0; }
+-  function render() { $('voice-talk').classList.toggle('is-talking',pressed); $('voice-listen').textContent = listening ? '关闭设备监听' : '开启设备监听'; status(pressed ? '正在说话，设备扬声器播放中' : listening ? '正在收听设备麦克风' : '未开启对讲'); }
++  function render() { $('voice-talk').classList.toggle('is-talking',pressed); $('voice-listen').textContent = listening ? '关闭设备监听' : '开启设备监听'; status(pressed ? (captureReady ? `正在传递声音 · 麦克风音量 ${micPeak}%` : '正在准备麦克风…') : listening ? '正在收听设备麦克风' : '未开启对讲'); }
+   async function control(key, value) {
+     if (!session || state?.connection?.session_id !== session) return false;
+     try {
+@@ -24,16 +24,19 @@
+     sending = true;
+     try {
+       while (pressed && queue.length && state?.connection?.session_id === session) {
+-        const payload = queue.shift();
+-        const response = await fetch('/api/audio', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: session, payload }), signal: AbortSignal.timeout(1500) });
+-        if (response.ok) sentFrames++;
++        const frames = queue.splice(0, 8);
++        const response = await fetch('/api/audio', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: session, frames }), signal: AbortSignal.timeout(1500) });
++        if (response.ok) sentFrames += frames.length;
+         if (!response.ok) throw Error((await response.json()).error || '语音发送失败');
+       }
+     } catch (error) { stopTalk(); status(error.message); }
+     finally { sending = false; }
+   }
++  // A short batch amortizes HTTP latency while retaining a bounded live queue.
++  setInterval(() => { if (pressed && queue.length) sendQueue(); }, 60);
+   function stopTalk() {
+-    pressed = false; epoch++; queue.length = 0;
++    if (!pressed && !captureReady && !stream && !capture) return;
++    pressed = false; captureReady = false; epoch++; queue.length = 0;
+     capture?.disconnect(); microphone?.disconnect(); capture = microphone = null;
+     stream?.getTracks().forEach(track => track.stop()); stream = null;
+     control('voice_talk', false); render();
+@@ -60,12 +63,13 @@
+       if (!pressed || token !== epoch) return;
+       if (!await control('voice_talk', true)) throw Error('设备未接受对讲命令');
+       if (!pressed || token !== epoch) { control('voice_talk', false); return; }
+-      flush(); microphone = context.createMediaStreamSource(stream); capture = new AudioWorkletNode(context, 'litepanel-voice');
++      flush(); captureReady = true; render(); microphone = context.createMediaStreamSource(stream); capture = new AudioWorkletNode(context, 'litepanel-voice');
+       capture.port.onmessage = ({ data }) => {
+         if (!pressed || token !== epoch) return;
+         let binary = ''; for (const byte of new Uint8Array(data)) binary += String.fromCharCode(byte);
+-        if (queue.length >= 4) queue.shift();
+-        queue.push({ codec: 'pcm_s16le', sample_rate: 16000, data: btoa(binary) }); sendQueue();
++        const samples = new Int16Array(data); let peak = 0; for (const value of samples) peak = Math.max(peak, Math.abs(value)); micPeak = Math.round(peak / 32767 * 100);
++        if (queue.length >= 8) queue.shift();
++        queue.push({ codec: 'pcm_s16le', sample_rate: 16000, data: btoa(binary) });
+       };
+       microphone.connect(capture); capture.connect(context.destination);
+       setTimeout(() => { if (token === epoch) stopTalk(); }, 59000);
+@@ -78,7 +82,7 @@
+   window.addEventListener('pagehide', stopAll);
+   document.addEventListener('visibilitychange', () => { if (document.hidden) stopAll(); });
+   $('audio-play').addEventListener('click', stopAll);
+-  setInterval(() => { const display = $('voice-diagnostics'); if (display) display.textContent = `电脑发送 ${sentFrames} 帧 · 电脑接收 ${receivedFrames} 帧 · 设备接收 ${state?.voice_rx_frames ?? '—'} 帧 · 设备发送 ${state?.voice_tx_frames ?? '—'} 帧 · 麦克风峰值 ${state?.voice_mic_peak ?? '—'}`; }, 500);
++  setInterval(() => { if (pressed && captureReady) render(); const display = $('voice-diagnostics'); if (display) display.textContent = `电脑发送 ${sentFrames} 帧 · 电脑接收 ${receivedFrames} 帧 · 设备接收 ${state?.voice_rx_frames ?? '—'} 帧 · 设备发送 ${state?.voice_tx_frames ?? '—'} 帧 · 麦克风峰值 ${state?.voice_mic_peak ?? '—'}`; }, 500);
+   setInterval(async () => {
+     if (!(listening || pressed)) return;
+     if (!state?.connected || state.connection?.session_id !== session || replay || !moduleEnabled('audio') || document.hidden) { stopAll(); return; }
+--- a/web/camera.js
++++ b/web/camera.js
+@@ -21,34 +21,21 @@
+     document.getElementById('video-empty').hidden = false;
+     badge.textContent = '已关闭';
+   }
+-  async function frame(token) {
+-    if (!running || token !== generation) return;
+-    controller = new AbortController();
+-    const timeout = setTimeout(() => controller?.abort(), 5000);
+-    try {
+-      const response = await fetch('/api/camera/snapshot.jpg?t=' + Date.now(), {cache: 'no-store', signal: controller.signal});
+-      if (!response.ok) {
+-        const error = await response.json();
+-        throw Error(error.error || '摄像头暂不可用');
+-      }
+-      const blob = await response.blob();
++  function frame(token) {
++    image.onload = () => {
+       if (!running || token !== generation) return;
+-      const next = URL.createObjectURL(blob);
+-      image.src = next;
+       image.hidden = false;
+       document.getElementById('video-empty').hidden = true;
+-      if (objectUrl) URL.revokeObjectURL(objectUrl);
+-      objectUrl = next;
+-      const cloud = state?.connection?.kind === 'mqtt';
+-      badge.textContent = cloud ? '云端预览中' : '局域网预览中';
+-      feedback.textContent = cloud ? 'MQTT 云端图像，约每秒更新；关闭预览不停止设备上报。' : '来自当前 Wi-Fi 设备；关闭画面可停止图像传输。';
+-      timer = setTimeout(() => frame(token), 100);
+-    } catch (error) {
++      badge.textContent = '实时预览中';
++      feedback.textContent = '连续视频流 · 优先流畅度，关闭画面停止浏览器接收。';
++    };
++    image.onerror = () => {
+       if (!running || token !== generation) return;
+-      stop();
+-      badge.textContent = '无法预览';
+-      feedback.textContent = error.name === 'AbortError' ? '摄像头请求超时，请检查设备连接。' : error.message;
+-    } finally { clearTimeout(timeout); }
++      stop(); badge.textContent = '无法预览';
++      feedback.textContent = '视频连接中断，请确认设备在线后重新预览。';
++    };
++    image.hidden = false;
++    image.src = '/api/camera/stream?t=' + Date.now();
+   }
+   document.getElementById('camera-start').onclick = () => {
+     stop();
+--- a/camera_proxy.py
++++ b/camera_proxy.py
+@@ -82,12 +82,18 @@
+     handler.end_headers()
+     handler.close_connection = True
+     session = manager.session
++    previous = None
+     try:
+         while manager.session is session and session.connected:
++            if frame is previous:
++                time.sleep(.01)
++                frame = camera_request(manager, "/snapshot.jpg")
++                continue
++            previous = frame
+             handler.wfile.write(b"--litepanel-frame\r\nContent-Type: image/jpeg\r\nContent-Length: "
+                                 + str(len(frame)).encode() + b"\r\n\r\n" + frame + b"\r\n")
+             handler.wfile.flush()
+-            time.sleep(.2)
++            time.sleep(.01)
+             frame = camera_request(manager, "/snapshot.jpg")
+     except (OSError, ValueError, http.client.HTTPException):
+         pass
+--- a/web/connection.js
++++ b/web/connection.js
+@@ -52,7 +52,7 @@
+         const fields=document.createElement('div');fields.className='connection-fields';
+         for(const [key,label,type] of schema){const wrapper=document.createElement('label');wrapper.textContent=label;const input=document.createElement('input');input.type=type;input.dataset.linkField=key;input.autocomplete=type==='password'?'new-password':'off';const value=key==='password'?linkPassword:linkConfig[key]??linkDefaults[kind]?.[key]??'';if(type==='checkbox')input.checked=!!value;else input.value=value;if(type==='number'){input.min='1';input.step='1';}input.oninput=()=>setLinkValue(key,type==='checkbox'?input.checked:type==='number'?Number(input.value):input.value.trim());wrapper.append(input);fields.append(wrapper);}if(kind==='ble'){const advanced=document.createElement('details');const summary=document.createElement('summary');summary.textContent='\u9ad8\u7ea7\u8bbe\u7f6e\uff08\u624b\u52a8\u5730\u5740 / \u81ea\u5b9a\u4e49 UUID\uff09';advanced.append(summary,fields);container.append(advanced);}else container.append(fields);
+         if(kind==='mqtt'){
+-            const help=document.createElement('p');help.className='notice';help.textContent='本云端请点击「使用云端已保存的 MQTT 配置」，无需输入密码。手动配置时：1883 端口关闭 TLS；网页使用 litepanel 账号及其专用密码，device001 仅供固件使用。设备 cfg.h 选择 CFG_XFER_MQTT 后需重新烧录并接入 Wi-Fi。摄像头上云需烧录新版固件，默认每秒一帧。';container.append(help);
++            const help=document.createElement('p');help.className='notice';help.textContent='本云端可直接点击「连接设备」或「使用云端已保存的 MQTT 配置」，无需输入密码。开发板通过 443 端口的 TLS 加密通道连接；网页后台通过服务器内部的 127.0.0.1 访问 Broker。公网明文 1883 和摄像头直连入口已关闭。';container.append(help);
+             const restore=document.createElement('button');restore.id='restore-server-mqtt';restore.type='button';restore.textContent='使用云端已保存的 MQTT 配置';restore.hidden=!savedServerConnection;restore.onclick=restoreServerConnection;container.append(restore);
+         }
+         if(kind==='wifi')setupWifiProvisioning(container);
+@@ -91,7 +91,7 @@
+   target.append(select);
+  }catch(error){target.textContent=error.message;}finally{discoveryBusy=false;}
+ }
+-async function connectLink(){if(window.connectionBusy||replay)return;window.connectionBusy=true;stopMove();setConnectionBusy();try{await linkRequest('/api/connection/connect',{...linkDefaults[linkConfig.kind],...linkConfig,password:linkPassword});points=[];$('device-configuration').open=false;showPage('home');log(`已连接 ${connectionNames[linkConfig.kind]}，等待数据上报`);toast(linkConfig.kind==='simulation'?'模拟设备已连接':'通信链路已连接，等待设备上报');}catch(error){toast(error.message);log(error.message);}finally{window.connectionBusy=false;setConnectionBusy();}}
++async function connectLink(){if(window.connectionBusy||replay)return;if(savedServerConnection&&linkConfig.kind==='mqtt'&&!linkPassword&&['','81.70.31.79','127.0.0.1'].includes(linkConfig.host||''))return restoreServerConnection();window.connectionBusy=true;stopMove();setConnectionBusy();try{await linkRequest('/api/connection/connect',{...linkDefaults[linkConfig.kind],...linkConfig,password:linkPassword});points=[];$('device-configuration').open=false;showPage('home');log(`已连接 ${connectionNames[linkConfig.kind]}，等待数据上报`);toast(linkConfig.kind==='simulation'?'模拟设备已连接':'通信链路已连接，等待设备上报');}catch(error){toast(error.message);log(error.message);}finally{window.connectionBusy=false;setConnectionBusy();}}
+ async function disconnectLink(){if(window.connectionBusy)return;window.connectionBusy=true;stopMove();setConnectionBusy();try{await linkRequest('/api/connection/disconnect',{});log('设备连接已断开');}catch(error){toast(error.message);}finally{window.connectionBusy=false;setConnectionBusy();}}
+ function setConnectionBusy(){for(const id of ['connect','settings-connect','settings-disconnect','device-mode','connection-kind'])$(id).disabled=window.connectionBusy||!!replay;$('settings-connect').textContent=window.connectionBusy?'连接操作中…':'连接设备';updateDisabled();}
+ function refreshConnection(next){const connection=next.connection||{kind:'simulation'};const name=connectionNames[connection.kind]||connection.kind;$('device-name').textContent=name;$('device-detail').textContent=`${name} · LP Binary v1`;$('source-mode').textContent=`● ${name}`;$('data-source-note').textContent=connection.kind==='simulation'?'数据来源：内置模拟设备':'数据来源：真实设备上报，未上报字段显示 —';let text=connection.kind==='simulation'?'当前使用模拟数据':!next.connected?'连接未建立':connection.stale?'通信链路已连接，设备尚未上报或超过 5 秒未更新':`已收到 ${connection.received} 帧 · 最近 ${new Date(connection.last_received*1000).toLocaleTimeString()}`;if(connection.dropped)text+=` · 缓冲丢帧 ${connection.dropped}`;if(connection.error)text+=` · ${connection.error}`;if(linkConfig.kind!==connection.kind)text+=` · 待连接方式：${connectionNames[linkConfig.kind]}`;$('link-status').textContent=text;const sent=connection.last_command;$('command-status').textContent=sent?`命令 #${sent.seq} ${sent.key}：${{sent:'已发送，等待设备应答',confirmed:'设备已确认',rejected:'设备拒绝',timeout:'设备应答超时'}[sent.status]}${sent.error?' · '+sent.error:''}`:'';if(next.connected&&connection.stale)$('connection-status').textContent='● 链路连接 / 等待数据';setConnectionBusy();}
+@@ -104,4 +104,4 @@
+ $('delete-form').onsubmit=async event=>{event.preventDefault();if(!deletingRecord||$('delete-confirmation').value!=='删除')return;$('delete-submit').disabled=true;$('delete-cancel').disabled=true;try{await linkRequest('/api/records/delete',{id:deletingRecord.id,confirmation:$('delete-confirmation').value});if(replay?.id===deletingRecord.id){replay=null;playing=false;$('replay').hidden=true;updateDisabled();}$('delete-dialog').close();deletingRecord=null;await loadRecords();toast('历史记录已删除');}catch(error){$('delete-error').textContent=error.message;$('delete-submit').disabled=false;}finally{$('delete-cancel').disabled=false;}};
+ renderLinkFields();
+ 
+-async function restoreServerConnection(){if(window.connectionBusy||replay)return;window.connectionBusy=true;setConnectionBusy();try{await linkRequest('/api/connection/restore',{});linkConfig={kind:'mqtt',host:'81.70.31.79',port:1883,username:'litepanel',up_topic:'devices/device001/up',down_topic:'devices/device001/down',tls:false};linkPassword='';persistLink();renderLinkFields();toast('云端 MQTT 已连接，等待设备上报');log('已恢复云端保存的 MQTT 连接');}catch(error){toast(error.message);log(error.message);}finally{window.connectionBusy=false;setConnectionBusy();}}
++async function restoreServerConnection(){if(window.connectionBusy||replay)return;window.connectionBusy=true;setConnectionBusy();try{await linkRequest('/api/connection/restore',{});linkConfig={kind:'mqtt',host:'127.0.0.1',port:1883,username:'litepanel',up_topic:'devices/device001/up',down_topic:'devices/device001/down',tls:false};linkPassword='';persistLink();renderLinkFields();toast('云端 MQTT 已连接，等待设备上报');log('已恢复云端保存的 MQTT 连接');}catch(error){toast(error.message);log(error.message);}finally{window.connectionBusy=false;setConnectionBusy();}}

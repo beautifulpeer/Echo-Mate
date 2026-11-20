@@ -1,0 +1,29 @@
+#!/bin/sh
+PID=/var/run/echo-litepanel.pid
+case "${1:-}" in
+start)
+    [ -s "$PID" ] && kill -0 "$(cat "$PID")" 2>/dev/null && exit 0
+    mkdir -p /userdata/echo-litepanel /var/log
+    chmod 700 /userdata/echo-litepanel
+    # Mixer setup follows the original Echo-Mate startup configuration.
+    amixer -c 0 cset name='ADC HPF Cut-off' 1 >/dev/null 2>&1 || true
+    amixer -c 0 cset name='ADC MIC Right Switch' 1 >/dev/null 2>&1 || true
+    amixer -c 0 cset name='ADC Digital Left Volume' 211 >/dev/null 2>&1 || true
+    amixer -c 0 cset name='ADC MIC Left Gain' 3 >/dev/null 2>&1 || true
+    amixer -c 0 cset name='ADC ALC Left Volume' 16 >/dev/null 2>&1 || true
+    amixer -c 0 cset name='DAC LINEOUT Volume' 25 >/dev/null 2>&1 || true
+    BIND=0.0.0.0
+    # Cloud deployments expose camera/control only through the authenticated site.
+    [ -s /userdata/echo-litepanel/cloud.json ] && BIND=127.0.0.1
+    /usr/bin/python3 -u /opt/echo-litepanel/server.py --bind "$BIND" >>/var/log/echo-litepanel.log 2>&1 &
+    echo $! > "$PID"
+    ;;
+stop)
+    if [ -s "$PID" ]; then
+        kill "$(cat "$PID")" 2>/dev/null || true
+        rm -f "$PID"
+    fi
+    ;;
+restart|reload) "$0" stop; sleep 3; "$0" start ;;
+*) echo "Usage: $0 {start|stop|restart}"; exit 1 ;;
+esac
